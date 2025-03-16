@@ -1,0 +1,94 @@
+/* Stile per il corpo */
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Contenitore principale */
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 500px;
+    text-align: left;
+}
+
+/* Titoli */
+h1, h2 {
+    color: #333333;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Input e textarea */
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #fafafa;
+}
+
+/* Bottoni */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    background-color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Link come bottoni */
+a.button {
+    display: block;
+    text-decoration: none;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+a.button:hover {
+    background-color: #0056b3;
+}
+
+/* Divisore */
+.divider {
+    margin: 20px 0;
+    border-top: 1px solid #e6e6e6;
+}
+
+/* Box risultato */
+.result {
+    background-color: #f9f9f9;
+    border: 1px solid #e6e6e6;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333333;
+    overflow-wrap: break-word;
+}
