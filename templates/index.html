@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagina Iniziale</title>
+    <style>
+        /* Stile per il corpo della pagina */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        /* Box principale per contenere il contenuto */
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* Titolo della pagina */
+        h1 {
+            color: #4CAF50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Testo descrittivo */
+        p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        /* Bottoni */
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Benvenuto alla pagina iniziale</h1>
+        <p>Clicca il bottone qui sotto per andare alla pagina per aggiungere una sacca:</p>
+
+        <!-- Bottone che rimanda alla pagina /aggiungi -->
+        <a href="/aggiungi" class="button">Aggiungi Sacca</a>
+        <a href="/tracciamento" class="button">Traccia la Sacca</a>
+    </div>
+</body>
+</html>
