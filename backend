@@ -160,11 +160,11 @@ def login():
         user = User.query.filter_by(Usrnm=hashed_username, Pwd=hashed_password).first()
 
         if user:
-            return render_template("dashboard.html", esito={"success": "Login effettuato con successo!"})
+            return render_template("Landing_Page.html", esito={"success": "Login effettuato con successo!"})
         else:
-            return render_template("login.html", esito={"error": "Credenziali errate"})
+            return render_template("Landing_Page.html", esito={"error": "Credenziali errate"})
 
-    return render_template("login.html")
+    return render_template("Landing_Page.html")
 
 @app.route("/tracciamento")
 def traccia():
