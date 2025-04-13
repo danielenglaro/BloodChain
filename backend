@@ -84,7 +84,7 @@ def process_registration():
     password = request.form.get("password")
 
     if not username or not password:
-        return render_template("registrazione.html", esito={"error": "Tutti i campi sono obbligatori"})
+        return render_template("Landing_Page.html", esito={"error": "Tutti i campi sono obbligatori"})
     
     # Calcolo hash per lo username da confrontare con quello presente nel DB
     hashed_username = hash_with_salt(username)
@@ -92,7 +92,7 @@ def process_registration():
     # Controllo se esiste già un utente con questo username
     existing_user = User.query.filter_by(Usrnm=hashed_username).first()
     if existing_user:
-        return render_template("registrazione.html", esito={"error": "Username già esistente"})
+        return render_template("Landing_Page.html", esito={"error": "Username già esistente"})
 
     try:
         nuovo_utente = User(Usrnm=username, Pwd=password)
@@ -102,7 +102,7 @@ def process_registration():
     except Exception as e:
         esito = {"error": f"Errore nel database: {str(e)}"}
 
-    return render_template("registrazione.html", esito=esito)
+    return render_template("Landing_Page.html", esito=esito)
 
 
 # Route per visualizzare il form di aggiunta
