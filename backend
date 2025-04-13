@@ -74,11 +74,9 @@ def hash_with_salt(value, salt="Luca"):
 def index():
     return render_template("index.html")
 
-@app.route("/registrazione", methods=["GET"])
-def show_registration_form():
-    return render_template("registrazione.html")
 
-@app.route("/registrazione", methods=["POST"])
+
+@app.route("/registrazione",methods=["GET", "POST"])
 def process_registration():
     username = request.form.get("username")
     password = request.form.get("password")
@@ -143,14 +141,14 @@ def invia():
     return render_template("invio.html", esito=esito_add)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
         if not username or not password:
-            return render_template("Landing_Page.html", esito={"error": "Tutti i campi sono obbligatori"})
+            return render_template( esito={"error": "Tutti i campi sono obbligatori"})
 
         # Hash delle credenziali inserite
         hashed_username = hash_with_salt(username)
@@ -160,9 +158,14 @@ def login():
         user = User.query.filter_by(Usrnm=hashed_username, Pwd=hashed_password).first()
 
         if user:
-            return render_template("Landing_Page.html", esito={"success": "Login effettuato con successo!"})
+            print("daje")
+            esito={"success": "Login effettuato con successo!"}
+            return esito
+        
         else:
-            return render_template("Landing_Page.html", esito={"error": "Credenziali errate"})
+            print("sve")
+            esito={"error": "Credenziali errate"}
+            return  esito
 
     return render_template("Landing_Page.html")
 
