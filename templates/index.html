@@ -1,20 +1,22 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagina Principale</title>
-    <!-- Collegamento al file CSS centralizzato -->
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Benvenuto nella Gestione Sacche</h1>
-        <p>Seleziona una delle opzioni disponibili qui sotto:</p>
-        
-        <!-- Link ai diversi percorsi -->
-        <a href="/aggiungi" class="button">Aggiungi Sacca</a>
-        <a href="/tracciamento" class="button">Traccia Sacca</a>
-    </div>
-</body>
-</html>
+<!-- templates/index.html -->
+<div class="container">
+    <h1>Benvenuto nella Gestione Sacche</h1>
+
+    <!-- Mostra il messaggio di esito, se presente -->
+    {% if esito %}
+        <p class="message">
+            {{ esito.success if esito.success else esito.error }}
+        </p>
+    {% endif %}
+
+    <p>Benvenuto! Se vuoi registrarti, clicca qui sotto:</p>
+
+    <!-- Link alla pagina di registrazione -->
+    <a href="/registrazione" class="button">Registrati</a>
+
+    <p>Oppure seleziona una delle opzioni disponibili qui sotto:</p>
+
+    <!-- Altri link -->
+    <a href="/aggiungi" class="button">Aggiungi Sacca</a>
+    <a href="/tracciamento" class="button">Traccia Sacca</a>
+</div>

@@ -1,95 +1,167 @@
 from flask import Flask, render_template, request
 import requests
 import json
+import hashlib
+from datetime import datetime, timedelta
+from flask_sqlalchemy import SQLAlchemy # type: ignore
 
 app = Flask(__name__)
 
-# Funzione per fare la richiesta all'API
-def aggiungi_sacca():
-    url = "http://endpoint-della-tua-api"  # Sostituisci con l'URL corretto
-    payload = {
-        "cmd": "Addkv",
-        "Key": "chiaveIdentificativaSacca",
-        "Value": "valoreCasuale"
-    }
-    headers = {'Content-Type': 'application/json'}
+# Configurazione del database
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    'mysql+mysqlconnector://root:polpetta@172.20.0.2:3306/Users?ssl_disabled=True'
+)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+
+
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    __tablename__ = 'Users'  # Nome della tabella nel database
+    Usrnm = db.Column(db.String(200), primary_key=True)  # Colonna per il nome utente
+    Pwd = db.Column(db.String(200), primary_key=True) 
+
+# Funzione per aggiungere la chiave
+next_id = 1  # Contatore per ID univoco
+
+def Add_kv(class_name, data, gruppo, fruibile, scadenza, luogo, donatore):
+    global next_id
+
+    url = "http://172.18.0.1:55556/api"
     
+    payload = {
+        "cmd": "AddKV",
+        "class": class_name,
+        "key": str(next_id),  # ID univoco sequenziale
+        "value": json.dumps({
+            "id": next_id,
+            "donatore": donatore,  # Aggiunto il campo donatore
+            "data": data,
+            "gruppo": gruppo,
+            "fruibile": fruibile,  # Sempre "Si"
+            "scadenza": scadenza,  # Ora è calcolata automaticamente
+            "luogo": luogo
+        })
+    }
+
+    headers = {'Content-Type': 'application/json'}
+
     try:
         response = requests.post(url, json=payload, headers=headers)
-        # Controllo il codice di stato per evitare errori
+        print(response.text)  # Debug: stampiamo la risposta dell'API
+
         if response.status_code == 200:
-            return response.json()  # Restituisce la risposta come JSON
+            try:
+                data = response.json()  # Proviamo a convertire in JSON
+                if isinstance(data, dict):
+                    next_id += 1  # Incrementiamo l'ID solo se la richiesta è andata a buon fine
+                    return data
+                else:
+                    return {"error": "La risposta non è un dizionario come previsto"}
+            except ValueError:
+                return {"error": "La risposta non è un JSON valido"}
         else:
-            return {"error": "Errore nella richiesta API", "status_code": response.status_code}
+            return {"error": f"Errore API: {response.status_code}"}
     except Exception as e:
         return {"error": str(e)}  # Restituisce l'errore nel caso di eccezione
 
-def traccia_sacca():
-    url = "http://endpoint-della-tua-api"  # Sostituisci con l'URL corretto
-    payload = {
-        "cmd": "Addkv",
-        "Key": "chiaveIdentificativaSacca",
-        "Value": "valoreCasuale"
-    }
-    headers = {'Content-Type': 'application/json'}
-    
-    try:
-        response = requests.post(url, data=json.dumps(payload), headers=headers)
-        # Controllo il codice di stato per evitare errori
-        if response.status_code == 200:
-            return response.json()  # Restituisce la risposta come JSON
-        else:
-            return {"error": "Errore nella richiesta API", "status_code": response.status_code}
-    except Exception as e:
-        return {"error": str(e)}  # Restituisce l'errore nel caso di eccezione
-
-# Funzione per chiamare l'API e aggiungere una sacca con i parametri del form
-def aggiungi_sacca_dinamica(campo1, campo2, campo3):
-    url = "http://endpoint-della-tua-api"  # Sostituisci con l'URL corretto
-    payload = {
-        "cmd": "Addkv",
-        "Key": campo1,
-        "Value": {"campo2": campo2, "campo3": campo3}
-    }
-    headers = {'Content-Type': 'application/json'}
-    
-    try:
-        response = requests.post(url, json=payload, headers=headers)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"error": "Errore nella richiesta API", "status_code": response.status_code}
-    except Exception as e:
-        return {"error": str(e)}
-
-# Route per la pagina principale (index)
+def hash_with_salt(value, salt="Luca"):
+    """Applica SHA-512 con il salt fisso usato nel database."""
+    return hashlib.sha512((value + salt).encode()).hexdigest()
 @app.route("/")
 def index():
     return render_template("index.html")
 
-# Route per visualizzare il form
-@app.route("/aggiungi")
+@app.route("/registrazione", methods=["GET"])
+def show_registration_form():
+    return render_template("registrazione.html")
+
+@app.route("/registrazione", methods=["POST"])
+def process_registration():
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    if not username or not password:
+        return render_template("registrazione.html", esito={"error": "Tutti i campi sono obbligatori"})
+
+    try:
+        nuovo_utente = User(Usrnm=username, Pwd=password)
+        db.session.add(nuovo_utente)
+        db.session.commit()
+        esito = {"success": "Registrazione completata con successo"}
+    except Exception as e:
+        esito = {"error": f"Errore nel database: {str(e)}"}
+
+    return render_template("registrazione.html", esito=esito)
+
+
+# Route per visualizzare il form di aggiunta
+@app.route("/aggiungi", methods=["GET"])
 def aggiungi():
     return render_template("aggiungi.html")
+7
+# Route per ricevere i dati dal form e chiamare l'API (metodo POST)
+@app.route("/aggiungi/invia", methods=["POST"])
 
-# Route per ricevere i dati dal form e chiamare l'API
 @app.route("/aggiungi/invia", methods=["POST"])
 def invia():
-    # Prendi i dati dal form
-    campo1 = request.form.get("campo1")
-    campo2 = request.form.get("campo2")
-    campo3 = request.form.get("campo3")
-    
-    # Chiama la funzione che interagisce con l'API
-    esito_aggiunta = aggiungi_sacca_dinamica(campo1, campo2, campo3)
-    
-    # Restituisci un template con l'esito
-    return render_template("invio.html", esito=esito_aggiunta)
+    data_str = request.form.get("data")
+    gruppo = request.form.get("gruppo")
+    luogo = request.form.get("luogo")
+    donatore = request.form.get("donatore")
+
+    if not data_str or not gruppo or not luogo or not donatore:
+        return render_template("aggiungi.html", esito={"error": "Tutti i campi sono obbligatori"})
+
+    # Se la data non è valida, usa quella attuale
+    try:
+        data_registrazione = datetime.strptime(data_str, "%Y-%m-%d")
+    except ValueError:
+        data_registrazione = datetime.now()
+
+    # Converte la data in formato stringa leggibile
+    data_registrazione_str = data_registrazione.strftime("%Y-%m-%d %H:%M:%S")
+
+    # Calcola la scadenza (+42 giorni)
+    data_scadenza = data_registrazione + timedelta(days=42)
+    data_scadenza_str = data_scadenza.strftime("%Y-%m-%d")
+
+    fruibile = "Si"  # Sempre "Si" di default
+
+    # Chiamata alla funzione per aggiungere i dati alla blockchain
+    esito_add = Add_kv("Sacche", data_registrazione_str, gruppo, fruibile, data_scadenza_str, luogo, donatore)
+    return render_template("invio.html", esito=esito_add)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if not username or not password:
+            return render_template("login.html", esito={"error": "Tutti i campi sono obbligatori"})
+
+        # Hash delle credenziali inserite
+        hashed_username = hash_with_salt(username)
+        hashed_password = hash_with_salt(password)
+
+        # Verifica nel database
+        user = User.query.filter_by(Usrnm=hashed_username, Pwd=hashed_password).first()
+
+        if user:
+            return render_template("dashboard.html", esito={"success": "Login effettuato con successo!"})
+        else:
+            return render_template("login.html", esito={"error": "Credenziali errate"})
+
+    return render_template("login.html")
 
 @app.route("/tracciamento")
 def traccia():
-    esito_tracciamento = traccia_sacca()
-    return render_template("tracciamento.html", esito=esito_tracciamento)
+    return render_template("tracciamento.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)
+
