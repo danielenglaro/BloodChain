@@ -1,0 +1,286 @@
+/* Stile Generale */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+  }
+  
+  body {
+    line-height: 1.6;
+    color: #333;
+    background-size: cover;
+    background-color: #fff;
+    overflow-x: hidden;
+  }
+  
+  header {
+    background-color: #e60000;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  header nav a {
+    color: white;
+    margin: 0 1rem;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  /* Hero */
+  .hero {
+    background: url('/sfondo2.png') no-repeat center center/cover;
+    color: white;
+    padding: 6rem 2rem;
+    text-align: center;
+    position: relative;
+  }
+  
+  .hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .hero .btn {
+    background-color: #fff;
+    color: #e60000;
+    padding: 0.8rem 1.5rem;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+  }
+  
+  .stats-marquee {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 0.5rem 0;
+  }
+  
+  .stats-marquee p {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scrollStats 20s linear infinite;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  @keyframes scrollStats {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+  
+  .section {
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  
+  .section h2 {
+    color: #e60000;
+    margin-bottom: 2rem;
+  }
+  
+  .benefits {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+  
+  .benefit {
+    flex: 1 1 200px;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+  }
+  
+  .news {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  footer {
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-top: 4rem;
+  }
+  
+  /* Dashboard */
+  .dashboard {
+    padding: 3rem 2rem;
+  }
+  
+  .overview .stats {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .stat {
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    text-align: center;
+    min-width: 180px;
+  }
+  
+  .actions .buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  .actions button {
+    background: #e60000;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  
+  .actions button:hover {
+    background: #c00000;
+  }
+  
+  /* Popup Forms */
+  .popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  
+  .popup-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+  }
+  
+  .popup-content h3 {
+    margin-bottom: 1rem;
+    color: #e60000;
+  }
+  
+  .popup-content label {
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+  }
+  
+  .popup-content input,
+  .popup-content select,
+  .popup-content textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .popup-content button[type="submit"] {
+    background: #e60000;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .popup-content .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+  }
+  
+  .popup-content .close:hover {
+    color: #000;
+  }
+  
+  /* Tabella donazioni */
+.donations-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background-color: #fff;
+}
+
+.donations-table th,
+.donations-table td {
+  border: 1px solid #ccc;
+  padding: 0.8rem;
+  text-align: center;
+}
+
+.donations-table th {
+  background-color: #e60000;
+  color: white;
+}
+
+/* Centro notifiche */
+.notifications {
+  margin-top: 3rem;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.notification {
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.notification.warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.notification.ok {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}

@@ -142,7 +142,7 @@ def login():
         password = request.form.get("password")
 
         if not username or not password:
-            return render_template("login.html", esito={"error": "Tutti i campi sono obbligatori"})
+            return render_template("Landing_Page.html", esito={"error": "Tutti i campi sono obbligatori"})
 
         # Hash delle credenziali inserite
         hashed_username = hash_with_salt(username)

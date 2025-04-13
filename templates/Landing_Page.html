@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dona Sangue - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Stile.css">
+
+  
+</head>
+<body>
+  <header>
+    <h1>BloodChain</h1>
+    <nav>
+      <a href="Landing_Page.html">Home</a>
+      <a href="Ospedale_DashBoard.html">Ospedale</a>
+      <a href="Donatore_DashBoard.html">Donatore</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Un piccolo gesto, una grande vita.</h1>
+    <p>Ogni goccia conta. Dona sangue, salva vite.</p>
+    <a href="#prenota" class="btn">Prenota la tua donazione</a>
+
+    <div class="stats-marquee">
+      <p>Donati 1340 Litri di seme • 400 caffé sprecati • 5000 chat inutili • +150 pali totali • Svejate • Alessio Svejate </p>
+    </div>
+  </section>
+
+  <section class="section" id="perche-donare">
+    <h2>Perché Donare?</h2>
+    <div class="benefits">
+      <div class="benefit">
+        <h3>Salvi vite</h3>
+        <p>Ogni donazione può aiutare fino a 3 pirdò.</p>
+      </div>
+      <div class="benefit">
+        <h3>Controllo gratuito</h3>
+        <p>Ogni donazione include un check-up della tua salute, svejate.</p>
+      </div>
+      <div class="benefit">
+        <h3>Gesto solidale</h3>
+        <p>Contribuisci a una società più piccata.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="news">
+    <h2>Ultime News</h2>
+    <div class="news">
+      <article>
+        <h3>Giornata mondiale del donatore</h3>
+        <p>Unisciti a noi il 14 giugno per celebrare chi salva vite ogni giorno.</p>
+      </article>
+      <article>
+        <h3>Mici?</h3>
+        <p>Durante l'estate le scorte calano. Prenota ora la tua donazione.</p>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Dona Sangue - Tutti i diritti riservati</p>
+    <p>Email: info@donasangue.it | Tel: 800-123-456</p>
+  </footer>
+</body>
+
+<script>
+  const sfondi = ['sfondo.png', 'sfondo2.png', 'sfondo3.png', 'sfondo4.png'];
+  const randomIndex = Math.floor(Math.random() * sfondi.length);
+  document.body.style.background = `url('${sfondi[randomIndex]}') no-repeat center center fixed`;
+  document.body.style.backgroundSize = 'cover';
+</script>
+</html>
