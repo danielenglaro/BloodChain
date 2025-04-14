@@ -1,12 +1,12 @@
-#Benvenuti#
-Questo è il repository del progetto.
-
-
-## Creare il container con il Database Mysql, importante prendere la password e vede se su flask è uguale, anche la porta 
-docker run --name nome-container -e MYSQL_ROOT_PASSWORD=tuapassword -e MYSQL_DATABASE=Users -p 3306:3306 -d mysql:latest
-
-##Accedere al container
-docker exec -it nome-container mysql -u root -p
-
-##TODO
-Creare lo yaml nostro mysql per tenere sempre su il container per il DB, per vedere cosa scrivere vedere back-end.yaml
+# Questo è il repository del progetto BloodChain
+BloodChain è un progetto che nasce con l'obiettivo di creare un sistema trasparente e affidabile per la gestione delle donazioni sanguigne. Tutti i dati sono gestiti da una BlockChain permissioned basata su Fabric. \
+BloodChain dal suo sito vuole fornire uno strumento ad ospedali e donatori. I primi hanno la possibilità di gestire la propria emoteca, mentre i donatori possono avere traccia del proprio contributo alla causa delle donazioni.
+## TODO
+- Inserire tutti i json payload nel backend flask
+- Creare pagina login.html
+- Riuscire ad esportare la blockchain (opzionale)
+- Finire di linkare il backend al nuovo sito
+- Creare un unico script .sh per avviare tutto il sistema in 1 solo colpo (opzionale)
+- Inserire "sudo usermode -aG docker %USER" (VAR USER) per non avere comandi bloccanti
+- Inserire i form corretti nelle pagine del sito
+  
