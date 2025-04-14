@@ -3,122 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Ospedale - BloodChain</title>
-  <link rel="stylesheet" href="Stile.css">
+  <title>Registrazione - BloodChain</title>
+  <link rel="stylesheet" href="static/css/Stile.css">
 </head>
 <body>
   <header>
-    <h1>BloodChain</h1>
-    <nav>
-      <a href="Landing_Page.html">Home</a>
-      <a href="Ospedale_DashBoard.html">Ospedale</a>
-      <a href="Donatore_DashBoard.html">Donatore</a>
-    </nav>
+    <h1>Registrazione Utente</h1>
   </header>
 
-  <main class="dashboard">
-    <section class="overview">
-      <h2>Statistiche Generali</h2>
-      <div class="stats">
-        <div class="stat">🔴 <strong>120</strong> sacche disponibili</div>
-        <div class="stat">🧬 <strong>58</strong> pali ricevuti da pallino</div>
-        <div class="stat">🚑 <strong>32</strong> richieste urgenti evase</div>
-        <div class="stat">📦 <strong>8</strong> consegne in corso</div>
-      </div>
-    </section>
+  <main>
+    <section class="registration-form">
+      <h2>Crea il tuo account</h2>
+      <form action="/registrazione" method="POST">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" name="username" id="username" placeholder="Inserisci username" required>
+        </div>
 
-    <section class="actions" id="azioni">
-      <h2>Azioni Rapide</h2>
-      <div class="buttons">
-        <button onclick="openForm('aggiungiSacca')">➕ Aggiungi sacca</button>
-        <button onclick="openForm('richiediSangue')">🩸 Richiedi sangue</button>
-        <button onclick="openForm('aggiornaStato')">🔄 Aggiorna stato</button>
-      </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" name="password" id="password" placeholder="Inserisci password" required>
+        </div>
+
+        <button type="submit">Registrati</button>
+      </form>
     </section>
   </main>
-
-  <!-- Popup Forms -->
-  <div class="popup" id="aggiungiSacca">
-    <div class="popup-content">
-      <span class="close" onclick="closeForm('aggiungiSacca')">&times;</span>
-      <h3>Aggiungi nuova sacca</h3>
-      <form>
-        <label>Tipo sanguigno:</label>
-        <select>
-          <option>0+</option>
-          <option>0-</option>
-          <option>A+</option>
-          <option>A-</option>
-          <option>B+</option>
-          <option>B-</option>
-          <option>AB+</option>
-          <option>AB-</option>
-        </select>
-        <label>Quantità (ml):</label>
-        <input type="number" placeholder="Es. 450" pattern="^(400|40[1-9]|4[1-4][0-9]|450)$" required="required">
-        <label>Data raccolta:</label>
-        <input type="date" required="required">
-        <label>Codice Fiscale Donatore:</label>
-        <input type="text" pattern="^[a-zA-Z]{6}[0-9]{2}[a-zA-Z][0-9]{2}[a-zA-Z][0-9]{3}[a-zA-Z]$" required="required">
-        <button type="submit">Invia</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="popup" id="richiediSangue">
-    <div class="popup-content">
-      <span class="close" onclick="closeForm('richiediSangue')">&times;</span>
-      <h3>Richiedi sangue</h3>
-      <form>
-        <label>Tipo richiesto:</label>
-        <select>
-          <option>0+</option><option>0-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
-        </select>
-        <label>Quantità (ml):</label>
-        <input type="number">
-        <label>Motivazione:</label>
-        <textarea></textarea>
-        <button type="submit">Invia richiesta</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="popup" id="aggiornaStato">
-    <div class="popup-content">
-      <span class="close" onclick="closeForm('aggiornaStato')">&times;</span>
-      <h3>Aggiorna stato consegna</h3>
-      <form>
-        <label>ID spedizione:</label>
-        <input type="text">
-        <label>Nuovo stato:</label>
-        <select>
-          <option>In transito</option>
-          <option>Consegnato</option>
-          <option>Annullato</option>
-        </select>
-        <button type="submit">Aggiorna</button>
-      </form>
-    </div>
-  </div>
 
   <footer>
     <p>&copy; 2025 BloodChain - Sistema gestione ospedali</p>
   </footer>
 
   <script>
-    function openForm(id) {
-      document.getElementById(id).style.display = 'block';
-    }
-
-    function closeForm(id) {
-      document.getElementById(id).style.display = 'none';
-    }
-      
-    const sfondi = ['sfondo.png', 'sfondo2.png', 'sfondo3.png', 'sfondo4.png'];
-    const randomIndex = Math.floor(Math.random() * sfondi.length);
-    document.body.style.background = `url('${sfondi[randomIndex]}') no-repeat center center fixed`;
-    document.body.style.backgroundSize = 'cover';
-    
+    // Eventuali script aggiuntivi se necessario
   </script>
 </body>
 </html>
