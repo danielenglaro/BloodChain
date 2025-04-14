@@ -1,0 +1,8 @@
+requests==2.31.0
+haslib
+datetime
+flask_sqlalchemy
+numpy>=1.24
+pandas
+flask<3.0
+mysql-connector-python

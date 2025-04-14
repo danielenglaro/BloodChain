@@ -7,5 +7,5 @@ CREATE TABLE Users(
     Pwd VARCHAR(200),
     Ruolo VARCHAR(200),
 
-    PRIMARY KEY(Usrnm, Pwd)
+    PRIMARY KEY(Usrnm, Pwd, Ruolo)
 )Engine= InnoDB;
