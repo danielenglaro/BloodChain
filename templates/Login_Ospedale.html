@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrazione - BloodChain</title>
+  <link rel="stylesheet" href="static/css/Stile.css">
+</head>
+<body>
+
+    <header>
+      <h1>BloodChain</h1>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/loginOspedale">Ospedale</a>
+        <a href="/loginDonatore">Donatore</a>
+      </nav>
+  </header>
+
+  <main>
+    <section class="registration-form">
+      <h2>Crea il tuo account</h2>
+      <form action="/loginOspedale" method="POST">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" name="username" id="username" placeholder="Inserisci username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" name="password" id="password" placeholder="Inserisci password" required>
+        </div>
+
+        <button type="submit">Registrati</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 BloodChain - Sistema gestione ospedali</p>
+  </footer>
+
+  <script>
+    // Eventuali script aggiuntivi se necessario
+  </script>
+</body>
+</html>
