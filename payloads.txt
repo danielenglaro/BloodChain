@@ -60,7 +60,7 @@ I json saranno:
                                                             }
                                                         ]
                                                     }
-    COMMENTI: Latitudine e Longitudine possono essere sostituite da "Stato","Regione","Città","Via" e "Civico" ma a parere mio è più compatto così.
+    COMMENTI: Latitudine e Longitudine possono essere sostituite da "Stato","Regione","Città","Via" e "Civico" ma a parere mio è più compatto così (Luca sei una guardia che usi le coordinate).
 
 
     CLASS: Trasfusione, Key: ID, Value:             {
