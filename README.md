@@ -9,4 +9,7 @@ BloodChain dal suo sito vuole fornire uno strumento ad ospedali e donatori. I pr
 - Creare un unico script .sh per avviare tutto il sistema in 1 solo colpo (opzionale)
 - Inserire "sudo usermode -aG docker %USER" (VAR USER) per non avere comandi bloccanti
 - Inserire i form corretti nelle pagine del sito
-  
+- Controllare che effettivamente il db stia prendendo i form dei login delle pagine di accesso di Donatore e Ospedale
+- Differenziare i Login Ospedale e Login Donatore dalla loro Registrazione, quindi creare un form anagrafico per queste
+- Utilizzare il software "global" che ci ha fatto vedere Alma per dare una proof delle API scambiate con la blockcahin
+-   
