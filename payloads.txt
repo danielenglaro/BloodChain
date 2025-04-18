@@ -1,0 +1,127 @@
+Classes List:
+    - Donatore
+    - Sacca
+    - Emoteca/SPOC
+    - Trasfusione
+    - Test
+    - Transito
+    - Moduli
+
+I json saranno:
+    CLASS: Donatore, Key: Codice Fiscale, Value:    {
+                                                        "Codice Fiscale": Codice Fiscale Donatore,
+                                                        "Lista Sacche": [
+                                                            {"ID": ID Sacca},
+                                                            ...,
+                                                            {"ID": ID Sacca}
+                                                        ]
+                                                    
+                                                    }
+    
+
+    CLASS: Sacca, Key: ID Sacca modificato, Value:  {
+                                                        "ID": ID Sacca,
+                                                        "Tipo": Plasma/Intera/Arricchita,
+                                                        "Quantità": range da 400 a 450 ml,
+                                                        "Donatore": Codice Fiscale Donatore,
+                                                        "Gruppo Sanguigno": gruppo sanguigno + rh,
+							                            "Data Inserimento": data inserimento,
+                                                        "Test": [
+                                                            {"ID": ID Test},
+                                                            ...,
+                                                            {"ID": ID Test}
+                                                        ],
+                                                        "Info": [
+                                                            {
+                                                                "Stato": in transito/in giacenza/danneggiata,
+                                                                "Luogo": ID Transito se in transito / ID Emoteca/SPOC se in giacenza / null se danngeggiata
+                                                            }
+                                                        ]
+                                                    }
+    COMMENTI: Con ID Sacca modificato intendo che viene aggiunto davanti "p_" se si tratta di una sacca di plasma o "si_" se è una sacca integrale. 
+    Nel caso si arricchischino solo all'inizio della filiera allora ci sarà anche "ar_" che sta per sacca arricchita.
+    Inoltre, assumo che il primo test della lista sia sempre l'esame preliminare necessario a donare, se così non fosse va modificato aggiungendo un campo per gli esami preliminari.
+
+
+    CLASS: Emoteca/SPOC, Key: ID+Nome Posto, Value: {
+                                                        "ID": ID Emoteca/SPOC,
+                                                        "Nome": Nome Emoteca/SPOC,
+                                                        "Latitudine": y coord,
+                                                        "Longitudine": x coord,
+                                                        "Sacche": [
+                                                            {
+                                                                "ID": ID Sacca,
+                                                                "Status": arrivo/presente/danneggiata/uscita
+                                                            },
+                                                            ...,
+                                                            {
+                                                                "ID": ID Sacca,
+                                                                "Status": arrivo/presente/danneggiata/uscita
+                                                            }
+                                                        ]
+                                                    }
+    COMMENTI: Latitudine e Longitudine possono essere sostituite da "Stato","Regione","Città","Via" e "Civico" ma a parere mio è più compatto così.
+
+
+    CLASS: Trasfusione, Key: ID, Value:             {
+                                                        "ID": ID Trasfusione,
+                                                        "Test associati": [
+                                                            {"ID": ID Test},
+                                                            ...,
+                                                            {"ID": ID Test}
+                                                        ],
+                                                        "Sacche associate": [
+                                                            {"ID": ID Sacca},
+                                                            ...,
+                                                            {"ID": ID Sacca}
+                                                        ]
+                                                    }
+
+    
+    CLASS: Test, Key: ID modificato, Value:         {
+                                                        "ID": ID test,
+                                                        "Tipo": preliminare/emocromo/altri,
+                                                        "Valori": [
+                                                            {
+                                                                "Nome": nome valore,
+                                                                "Valore": valore valore
+                                                            },
+                                                            ...,
+                                                            {
+                                                                "Nome": nome valore,
+                                                                "Valore": valore valore
+                                                            }
+                                                        ]
+                                                        "Esito": positivo/negativo
+                                                    }
+    COMMENTI: L'ID sarà modificato con un prefisso che indica il tipo di test, se preliminare sarà "pr_", se emocromo sarà "em_".
+    Per tutte le future aggiunte di tipi di test, il prefisso saranno le prime due lettere del nome del test.
+
+
+    CLASS: Transito, Key: ID, Value:                {
+                                                        "ID": ID transito,
+                                                        "Da": ID luogo di partenza,
+                                                        "A": ID luogo di arrivo
+                                                        "Carico": [
+                                                            {"ID": ID Sacca},
+                                                            ...,
+                                                            {"ID": ID Sacca}
+                                                        ]
+                                                    }
+
+
+    CLASS: Moduli, Key: ID, Value:                  {
+                                                        "ID": ID modulo,
+                                                        "Codice Modulo": Codice del modulo cartaceo,
+                                                        "Opzioni": [
+                                                            {
+                                                                "Nome": Nome opzione,
+                                                                "Scelta": firmato/non firmato/barrato/non barrato
+                                                            },
+                                                            ...,
+                                                            {
+                                                                "Nome": Nome opzione,
+                                                                "Scelta": firmato/non firmato/barrato/non barrato
+                                                            }
+                                                        ]
+                                                    }

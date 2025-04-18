@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggiungi Sacca</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Aggiungi una Sacca</h1>
+        <form action="/aggiungi/invia" method="POST">
+            <label for="data">Data di registrazione:</label>
+            <input type="date" name="data" id="data" required>
+
+            <label for="gruppo">Gruppo sanguigno:</label>
+            <input type="text" name="gruppo" placeholder="Es: 0+, A-, B+" required>
+
+            <label for="luogo">Luogo di conservazione:</label>
+            <input type="text" name="luogo" placeholder="Inserisci il luogo" required>
+
+            <label for="donatore">Nome del Donatore:</label>
+            <input type="text" name="donatore" placeholder="Inserisci il nome del donatore" required>
+
+            <button type="submit">Invia</button>
+        </form>
+    </div>
+</body>
+</html>
