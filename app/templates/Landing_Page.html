@@ -14,15 +14,15 @@
     <h1>BloodChain</h1>
     <nav>
       <a href="/">Home</a>
-      <a href="/loginOspedale">Ospedale</a>
-      <a href="/loginDonatore">Donatore</a>
+      <a href="/dashboardOspedale">Ospedale</a>
+      <a href="/dashboardDonatore">Donatore</a>
     </nav>
   </header>
 
   <section class="hero">
     <h1>Un piccolo gesto, una grande vita.</h1>
     <p>Ogni goccia conta. Dona sangue, salva vite.</p>
-    <a href="#prenota" class="btn">Prenota la tua donazione</a>
+    <button class="login-btn" onclick="openModal()">Login</button>
 
     <div class="stats-marquee">
       <p>Donati 1340 Litri di seme • 400 caffé sprecati • 5000 chat inutili • +150 pali totali • Svejate • Alessio Svejate </p>
@@ -61,6 +61,25 @@
     </div>
   </section>
 
+  <br>
+    
+  <!-- MODAL LOGIN -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Accedi</h2>
+      <form id="loginForm">
+        <label><input type="radio" name="tipo" value="ospedale" checked> Ospedale</label>
+        <label><input type="radio" name="tipo" value="donatore"> Donatore</label><br><br>
+
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+
+        <button type="submit" class="btn">Login</button>
+      </form>
+    </div>
+  </div>
+
   <footer>
     <p>&copy; 2025 Dona Sangue - Tutti i diritti riservati</p>
     <p>Email: info@donasangue.it | Tel: 800-123-456</p>
@@ -68,9 +87,25 @@
 </body>
 
 <script>
-  const sfondi = ['sfondo.png', 'sfondo2.png', 'sfondo3.png', 'sfondo4.png'];
-  const randomIndex = Math.floor(Math.random() * sfondi.length);
-  document.body.style.background = `url('${sfondi[randomIndex]}') no-repeat center center fixed`;
-  document.body.style.backgroundSize = 'cover';
+  
+  function openModal() {
+  document.getElementById("loginModal").style.display = "block";
+}
+
+function closeModal() {
+  document.getElementById("loginModal").style.display = "none";
+}
+
+document.getElementById("loginForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const tipo = document.querySelector('input[name="tipo"]:checked').value;
+  if (tipo === "ospedale") {
+    window.location.href = "/dashboardOspedale";
+  } else {
+    window.location.href = "/dashboardDonatore";
+  }
+});
+
+
 </script>
 </html>

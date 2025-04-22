@@ -277,12 +277,57 @@ footer {
   border: 1px solid #c3e6cb;
 }
 
-/* Form di registrazione */
-.registration-form {
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 20;
+  left: 0;
+  top: 0;
   width: 100%;
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: rgba
-::contentReference[oaicite:2]{index=2}
- 
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 30px;
+  width: 300px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+}
+
+.close {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="password"] {
+  width: 90%;
+  padding: 8px;
+  margin: 10px 0;
+}
+
+.modal-content .btn {
+  margin-top: 10px;
+}
+
+.login-btn {
+  background-color: #1a237e; /* blu scuro */
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 30px;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #0d165c;
+}
