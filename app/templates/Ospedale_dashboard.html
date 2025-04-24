@@ -141,6 +141,16 @@
       </form>
     </div>
   </div>
+
+  <div class="popup" id="popupSacche">
+    <div class="popup-content">
+      <span class="close" onclick="closeForm('popupSacche')">&times;</span>
+      <h3>Sacche associate</h3>
+      <ul id="listaSacche">
+        <!-- Sacche verranno mostrate qui -->
+      </ul>
+    </div>
+  </div>
   
   <div class="popup" id="aggiungiEmoteca">
     <div class="popup-content">
@@ -244,11 +254,33 @@
         // Aggiungi un bottone per aggiungere una sacca all'emoteca
         const cell = row.insertCell(4);
         const bottoneAggiungi = document.createElement('button');
-        bottoneAggiungi.innerText = "Aggiungi sacca";
-        bottoneAggiungi.onclick = () => openForm('aggiungiSacca');
+        bottoneAggiungi.innerText = "Visualizza sacche";
+        bottoneAggiungi.onclick = () => visualizzaSacche(index);
         cell.appendChild(bottoneAggiungi);
       });
     }
+
+
+        // Mostra le sacche di una emoteca in un popup
+    function visualizzaSacche(emotecaIndex) {
+      const lista = document.getElementById('listaSacche');
+      lista.innerHTML = ''; // Pulisce
+
+      const sacche = emoteche[emotecaIndex].sacche;
+
+      if (sacche.length === 0) {
+        lista.innerHTML = '<li>Nessuna sacca disponibile.</li>';
+      } else {
+        sacche.forEach((sacca, i) => {
+          const li = document.createElement('li');
+          li.textContent = `Sacca ${i + 1}: Tipo ${sacca.tipo}, Quantità ${sacca.quantita} ml`;
+          lista.appendChild(li);
+        });
+      }
+
+      openForm('popupSacche'); // Mostra il popup
+    }
+
 
   </script>
 </body>
