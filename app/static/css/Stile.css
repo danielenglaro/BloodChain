@@ -331,3 +331,57 @@ footer {
 .login-btn:hover {
   background-color: #0d165c;
 }
+
+/* Tabella Emoteca/SPOC */
+.tabella-emoteca {
+  margin: 4rem auto;
+  max-width: 900px;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.tabella-emoteca h3 {
+  text-align: center;
+  color: #003366;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+#emotecaTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#emotecaTable thead {
+  background-color: #003366;
+  color: white;
+}
+
+#emotecaTable th,
+#emotecaTable td {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+#emotecaTable tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#emotecaTable button {
+  background: #0066cc;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#emotecaTable button:hover {
+  background-color: #004d99;
+}

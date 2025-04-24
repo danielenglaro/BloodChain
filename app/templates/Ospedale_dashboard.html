@@ -33,70 +33,133 @@
         <button onclick="openForm('aggiungiSacca')">➕ Aggiungi sacca</button>
         <button onclick="openForm('richiediSangue')">🩸 Richiedi sangue</button>
         <button onclick="openForm('aggiornaStato')">🔄 Aggiorna stato</button>
+        <button onclick="openForm('aggiungiEmoteca')">🏥 Aggiungi Emoteca/SPOC</button>
+
       </div>
     </section>
   </main>
 
-  <!-- Popup Forms -->
+  
+    <!-- Form Emoteca -->
+    <div class="popup" id="aggiungiEmoteca">
+      <div class="popup-content">
+        <span class="close" onclick="closeForm('aggiungiEmoteca')">&times;</span>
+        <h3>Aggiungi Emoteca/SPOC</h3>
+        <form id="emotecaForm">
+          <label>Nome Emoteca/SPOC:</label>
+          <input type="text" id="nomeEmoteca" required="required">
+          
+          <label>Latitudine:</label>
+          <input type="number" id="latitudine" step="any" required="required">
+          
+          <label>Longitudine:</label>
+          <input type="number" id="longitudine" step="any" required="required">
+          
+          <button type="button" onclick="aggiungiEmoteca()">Aggiungi Emoteca</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tabella per visualizzare le sacche dell'emoteca -->
+    <section class="tabella-emoteca">
+      <h3>Emoteca/SPOC e Sacche Associate</h3>
+      <table id="emotecaTable">
+        <thead>
+          <tr>
+            <th>Nome Emoteca</th>
+            <th>Latitudine</th>
+            <th>Longitudine</th>
+            <th>Sacche Associate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- La tabella sarà popolata dinamicamente con le sacche -->
+        </tbody>
+      </table>
+    </section>
+
   <div class="popup" id="aggiungiSacca">
     <div class="popup-content">
       <span class="close" onclick="closeForm('aggiungiSacca')">&times;</span>
       <h3>Aggiungi nuova sacca</h3>
-      <form>
-        <label>Tipo sanguigno:</label>
-        <select>
-          <option>0+</option>
-          <option>0-</option>
-          <option>A+</option>
-          <option>A-</option>
-          <option>B+</option>
-          <option>B-</option>
-          <option>AB+</option>
-          <option>AB-</option>
+      <form method="POST" action="/inserisci_sacca">
+        <label>ID Sacca:</label>
+        <input type="text" name="sacca_id" placeholder="ID univoco della sacca" required>
+  
+        <label>Tipo:</label>
+        <select name="tipo" required>
+          <option value="">-- Seleziona --</option>
+          <option value="Intera">Intera</option>
+          <option value="Plasma">Plasma</option>
+          <option value="Piastrine">Piastrine</option>
         </select>
+  
         <label>Quantità (ml):</label>
-        <input type="number" placeholder="Es. 450" pattern="^(400|40[1-9]|4[1-4][0-9]|450)$" required="required">
-        <label>Data raccolta:</label>
-        <input type="date" required="required">
+        <input type="number" name="quantita" placeholder="Es. 450" required>
+  
         <label>Codice Fiscale Donatore:</label>
-        <input type="text" pattern="^[a-zA-Z]{6}[0-9]{2}[a-zA-Z][0-9]{2}[a-zA-Z][0-9]{3}[a-zA-Z]$" required="required">
-        <button type="submit">Invia</button>
+        <input type="text" name="donatore" pattern="^[a-zA-Z]{6}[0-9]{2}[a-zA-Z][0-9]{2}[a-zA-Z][0-9]{3}[a-zA-Z]$" required>
+  
+        <label>Gruppo Sanguigno:</label>
+        <select name="gruppo_sanguigno" required>
+          <option value="">-- Seleziona --</option>
+          <option>0+</option><option>0-</option>
+          <option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option>
+        </select>
+  
+        <label>Data Inserimento:</label>
+        <input type="date" name="data_inserimento" required>
+  
+        <label>Test associati (separati da virgola):</label>
+        <input type="text" name="test" placeholder="es. HIV, HBV, HCV">
+  
+        <label>Info / Stato sacca (separati da virgola):</label>
+        <input type="text" name="info" placeholder="es. In transito, Conservata">
+  
+        <button type="submit">Invia alla Blockchain</button>
       </form>
     </div>
   </div>
-
+  
   <div class="popup" id="richiediSangue">
     <div class="popup-content">
       <span class="close" onclick="closeForm('richiediSangue')">&times;</span>
-      <h3>Richiedi sangue</h3>
-      <form>
-        <label>Tipo richiesto:</label>
-        <select>
-          <option>0+</option><option>0-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
-        </select>
-        <label>Quantità (ml):</label>
-        <input type="number">
-        <label>Motivazione:</label>
-        <textarea></textarea>
-        <button type="submit">Invia richiesta</button>
+      <h3>Richiedi transito di sangue</h3>
+      <form method="POST" action="/richiedi_transito">
+        <label>Da (Ospedale mittente):</label>
+        <input type="text" name="da" placeholder="Ospedale A" required>
+  
+        <label>A (Ospedale destinatario):</label>
+        <input type="text" name="a" placeholder="Ospedale B" required>
+  
+        <label>ID Sacche da trasportare (separate da virgola):</label>
+        <input type="text" name="carico" placeholder="es. SAC001, SAC002, SAC003" required>
+  
+        <button type="submit">Avvia transito</button>
       </form>
     </div>
   </div>
-
-  <div class="popup" id="aggiornaStato">
+  
+  <div class="popup" id="aggiungiEmoteca">
     <div class="popup-content">
-      <span class="close" onclick="closeForm('aggiornaStato')">&times;</span>
-      <h3>Aggiorna stato consegna</h3>
-      <form>
-        <label>ID spedizione:</label>
-        <input type="text">
-        <label>Nuovo stato:</label>
-        <select>
-          <option>In transito</option>
-          <option>Consegnato</option>
-          <option>Annullato</option>
-        </select>
-        <button type="submit">Aggiorna</button>
+      <span class="close" onclick="closeForm('aggiungiEmoteca')">&times;</span>
+      <h3>Crea nuova Emoteca / SPOC</h3>
+      <form method="POST" action="/aggiungi_emoteca">
+        <label>Nome emoteca:</label>
+        <input type="text" name="nome" placeholder="Ospedale San Giovanni" required>
+  
+        <label>Latitudine:</label>
+        <input type="text" name="latitudine" placeholder="Es. 41.9028" required>
+  
+        <label>Longitudine:</label>
+        <input type="text" name="longitudine" placeholder="Es. 12.4964" required>
+  
+        <label>ID sacche associate (separate da virgola):</label>
+        <input type="text" name="sacche" placeholder="SAC001, SAC002">
+  
+        <button type="submit">Crea Emoteca</button>
       </form>
     </div>
   </div>
@@ -119,6 +182,74 @@
     document.body.style.background = `url('${sfondi[randomIndex]}') no-repeat center center fixed`;
     document.body.style.backgroundSize = 'cover';
     
+
+    
+    // Funzione per aggiungere un'emoteca
+    let emoteche = []; // Memorizza tutte le emoteche
+
+    function aggiungiEmoteca() {
+      const nome = document.getElementById('nomeEmoteca').value;
+      const latitudine = document.getElementById('latitudine').value;
+      const longitudine = document.getElementById('longitudine').value;
+      
+      if (!nome || !latitudine || !longitudine) {
+        alert("Tutti i campi sono obbligatori");
+        return;
+      }
+
+      const nuovaEmoteca = {
+        nome,
+        latitudine,
+        longitudine,
+        sacche: [] // Ogni emoteca ha una lista di sacche
+      };
+
+      emoteche.push(nuovaEmoteca);
+      aggiornaTabellaEmoteca();
+      closeForm('aggiungiEmoteca'); // Chiude il popup dopo aver aggiunto
+    }
+
+     // Funzione per aggiungere una sacca a una specifica emoteca
+     function aggiungiSacca(emotecaIndex) {
+      const tipo = document.getElementById('tipoSacca').value;
+      const quantita = document.getElementById('quantitaSacca').value;
+
+      if (!tipo || !quantita) {
+        alert("Compila tutti i campi della sacca.");
+        return;
+      }
+
+      const nuovaSacca = {
+        tipo,
+        quantita
+      };
+
+      emoteche[emotecaIndex].sacche.push(nuovaSacca); // Aggiungi la sacca all'emoteca
+      aggiornaTabellaEmoteca(); // Rende la tabella aggiornata
+      closeForm('aggiungiSacca'); // Chiude il popup dopo aver aggiunto
+    }
+
+    // Funzione per aggiornare la tabella dell'emoteca
+    function aggiornaTabellaEmoteca() {
+      const tabella = document.getElementById('emotecaTable').getElementsByTagName('tbody')[0];
+      tabella.innerHTML = ''; // Pulisce la tabella esistente
+
+      emoteche.forEach((emoteca, index) => {
+        let row = tabella.insertRow();
+        row.insertCell(0).innerText = emoteca.nome;
+        row.insertCell(1).innerText = emoteca.latitudine;
+        row.insertCell(2).innerText = emoteca.longitudine;  
+        row.insertCell(3).innerText = emoteca.sacche.length;
+
+        // Aggiungi un bottone per aggiungere una sacca all'emoteca
+        const cell = row.insertCell(4);
+        const bottoneAggiungi = document.createElement('button');
+        bottoneAggiungi.innerText = "Aggiungi sacca";
+        bottoneAggiungi.onclick = () => openForm('aggiungiSacca');
+        cell.appendChild(bottoneAggiungi);
+      });
+    }
+
   </script>
 </body>
 </html>
