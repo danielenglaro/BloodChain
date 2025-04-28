@@ -18,3 +18,8 @@ BloodChain dal suo sito vuole fornire uno strumento ad ospedali e donatori. I pr
     -  3. Creare il form per la registrazione
 - Utilizzare il software Hyperledge explorer che ci ha fatto vedere Alma per dare una proof delle API scambiate con la blockcahin
 - Capire se bisogna fare anche gli atlri payload che stanno dentro payload.txt
+
+
+## TODO da Lezione
+- Cifrare i paylaod per interi
+- Per fare il login non facciamo il controllo degli hash, mandaimo al db i dati in chiaro e tutto l'hash con sale avviene direttamente li. Quindi quando il backend invoca un controllo fa la chiamata in chiaro, il db prende hasha e controlla.
