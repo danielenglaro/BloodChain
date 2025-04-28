@@ -20,7 +20,7 @@ def add_kv_to_blockchain(payload):
 # Funzione per salvare su CSV
 def salva_su_csv():
     while True:
-        time.sleep(60)
+        time.sleep(10)
         now = datetime.now()
         cutoff = now - timedelta(hours=1)
         recent_data = [(t.strftime("%Y-%m-%d %H:%M:%S"), temp) for t, temp in temperature_log if t >= cutoff]
@@ -58,4 +58,4 @@ while True:
     # Invio simulato
     add_kv_to_blockchain(payload)
 
-    time.sleep(10)
+    time.sleep(1)
