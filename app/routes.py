@@ -12,6 +12,12 @@ bp = Blueprint('routes', __name__)
 def index():
     return render_template("Landing_Page.html")
 
+@bp.route("/autenticazioneOspedale")
+def authOspedale():
+    #Qui dobbiamo inserire lo script per effettuare il login e la registrazione
+    return render_template("pre_Ospedale.html")
+
+
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":

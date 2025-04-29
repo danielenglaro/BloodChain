@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrazione Ospedale</title>
+  <link rel="stylesheet" href="static/css/Stile.css">
+  
+</head>
+<body>
+
+  <header>
+    <h1>BloodChain</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/dashboardOspedale">Ospedale</a>
+      <a href="/dashboardDonatore">Donatore</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Un piccolo gesto, una grande vita.</h1>
+    <p>Ogni goccia conta. Dona sangue, salva vite.</p>
+
+    <button class="login-btn" onclick="openModal()">Login</button>
+    <button class="login-btn" onclick="mostraFormRegistrazione()">Registrazione</button>
+
+    <div class="stats-marquee">
+      <p>Donati 1340 Litri di seme • 400 caffé sprecati • Svejate • Alessio Svejate </p>
+    </div>
+  </section>
+
+  <!-- MODAL LOGIN -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Accedi</h2>
+      <form id="loginForm">
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button type="submit" class="btn">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FORM REGISTRAZIONE -->
+  <section class="section" id="formRegistrazioneOspedale" style="background-color: #fff; max-width: 1000px; margin: 3rem auto; border-radius: 16px; padding: 2rem; box-shadow: 0 0 15px rgba(0,0,0,0.1);">
+    <h2 style="color: #003366; margin-bottom: 2rem;">Registrazione Centro Ospedaliero</h2>
+    <form id="formOspedale" action="/submitRegistrazioneOspedale" method="post">
+
+      <h3>Dati identificativi dell’ospedale:</h3>
+      <label>Nome ufficiale:</label>
+      <input type="text" name="nome_ospedale" required>
+
+      <label>Codice identificativo:</label>
+      <input type="text" name="codice_identificativo">
+
+      <label>Partita IVA / Codice Fiscale:</label>
+      <input type="text" name="partita_iva">
+
+      <h3>📍 Informazioni sulla sede:</h3>
+      <label>Indirizzo completo:</label>
+      <input type="text" name="indirizzo" required>
+
+      <label>Coordinate GPS (opzionale):</label>
+      <input type="text" name="gps">
+
+      <label>Regione:</label>
+      <input type="text" name="regione">
+
+      <label>Comune:</label>
+      <input type="text" name="comune">
+
+      <h3>📞 Contatti:</h3>
+      <label>Telefono:</label>
+      <input type="tel" name="telefono" required>
+
+      <label>Email dedicata:</label>
+      <input type="email" name="email" required>
+
+      <label>Sito web (opzionale):</label>
+      <input type="url" name="sito_web">
+
+      <h3>👤 Referente del centro donazioni:</h3>
+      <label>Nome e Cognome:</label>
+      <input type="text" name="referente_nome" required>
+
+      <label>Ruolo o qualifica:</label>
+      <input type="text" name="referente_ruolo" required>
+
+      <label>Contatto diretto (telefono o email):</label>
+      <input type="text" name="referente_contatto">
+
+      <h3>🕒 Orari e modalità:</h3>
+      <label>Giorni e orari per donare:</label>
+      <input type="text" name="orari_donazione">
+
+      <label>Modalità di prenotazione:</label>
+      <input type="text" name="prenotazione">
+
+      <label>Tipologie accettate:</label>
+      <input type="text" name="tipologie">
+
+      <h3>📄 Documentazione:</h3>
+      <label>Autorizzazioni sanitarie:</label>
+      <input type="text" name="autorizzazioni">
+
+      <label>Certificazioni o accreditamenti:</label>
+      <input type="text" name="certificazioni">
+
+      <h3>🩸 Capacità e disponibilità:</h3>
+      <label>Numero medio donazioni/giorno:</label>
+      <input type="number" name="media_donazioni" min="0">
+
+      <label>Periodi di chiusura/limitazioni:</label>
+      <input type="text" name="chiusure">
+
+      <button type="submit" class="btn">Invia Registrazione</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Dona Sangue - Tutti i diritti riservati</p>
+    <p>Email: info@donasangue.it | Tel: 800-123-456</p>
+  </footer>
+
+  <script>
+    function openModal() {
+      document.getElementById("loginModal").style.display = "block";
+      document.getElementById("formRegistrazioneOspedale").style.display = "none";
+    }
+
+    function closeModal() {
+      document.getElementById("loginModal").style.display = "none";
+    }
+
+    function mostraFormRegistrazione() {
+      document.getElementById("formRegistrazioneOspedale").style.display = "block";
+      document.getElementById("loginModal").style.display = "none";
+      document.getElementById("formRegistrazioneOspedale").scrollIntoView({ behavior: "smooth" });
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+      if (tipo === "ospedale") {
+        window.location.href = "/dashboardOspedale";
+      } else {
+        window.location.href = "/dashboardDonatore";
+      }
+    });
+  </script>
+
+</body>
+</html>
