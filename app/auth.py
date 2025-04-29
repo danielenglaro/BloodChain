@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from .models import User
+from sqlalchemy import text
 from .utils import hash_with_salt
 from . import db
 
@@ -14,12 +15,16 @@ def login():
         if not username or not password:
             return render_template("Landing_Page.html", esito={"error": "Tutti i campi sono obbligatori"})
 
-        hashed_username = hash_with_salt(username)
-        hashed_password = hash_with_salt(password)
+        # Query SQL grezza che esegue l'hash nel DB
+        query = text("""
+            SELECT * FROM Users
+            WHERE Usrnm = SHA2(CONCAT(:username, 'Luca'), 512)
+            AND Pwd = SHA2(CONCAT(:password, 'Luca'), 512)
+        """)
 
-        user = User.query.filter_by(Usrnm=hashed_username, Pwd=hashed_password).first()
+        result = db.session.execute(query, {"username": username, "password": password}).fetchone()
 
-        if user:
+        if result:
             return render_template("Landing_Page.html", esito={"success": "Login effettuato con successo!"})
         else:
             return render_template("Landing_Page.html", esito={"error": "Credenziali errate"})

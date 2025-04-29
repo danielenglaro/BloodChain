@@ -1,3 +1,4 @@
-I sensori prendono la temperature media di un interavvlo di tempo, ad esempio ultima ora. Qunado viene accodata la transazione alla blockchain viene fatto un controllo su questo pacchetto di temperature, se è presente un valore fuori dal range, dentro il payload ci stanno quali sacche nel caso si danneggiano, vanno rese inutilizzabili. 
+I sensori prendono la temperature media di un intervallo di tempo, ad esempio ultima ora. Qunado viene accodata la transazione alla blockchain viene fatto un controllo su questo pacchetto di temperature, se è presente un valore fuori dal range, dentro il payload ci stanno quali sacche nel caso si danneggiano, vanno rese inutilizzabili. 
 Stesso discorso per le scadenze, serve un sistema per automatico per controllare le sacche di ogni ospedale.
+
 - Possiamo inserire uno script ".sh" che ogni tot fa una getkv delle sacche, che sara tutto cifrato tranne la data e le info sull'ospedale. In modo che se vede una data fuori posto lui manda una "notifica" a quell'opedale, anche l'id della sacca tanto è in chiaro. 
