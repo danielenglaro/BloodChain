@@ -6,8 +6,8 @@ from . import db
 
 bp = Blueprint('auth', __name__)
 
-@bp.route("/login", methods=["GET", "POST"])
-def login():
+@bp.route("/accessoDonatore", methods=["GET", "POST"])
+def accessoDonatore():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -17,7 +17,7 @@ def login():
 
         # Query SQL grezza che esegue l'hash nel DB
         query = text("""
-            SELECT * FROM Users
+            SELECT * FROM Donatore
             WHERE Usrnm = SHA2(CONCAT(:username, 'Luca'), 512)
             AND Pwd = SHA2(CONCAT(:password, 'Luca'), 512)
         """)
@@ -29,7 +29,17 @@ def login():
         else:
             return render_template("Landing_Page.html", esito={"error": "Credenziali errate"})
 
-    return render_template("Landing_Page.html")
+    return render_template("pre_Donatore.html")
+
+
+
+@bp.route("/accessoOspedale", methods=["GET", "POST"])
+def authOspedale():
+    return render_template("pre_Ospedale.html")
+
+
+
+
 
 @bp.route("/loginOspedale", methods=["GET", "POST"])
 def ospedale_login():

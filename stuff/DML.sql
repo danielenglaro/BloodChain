@@ -25,3 +25,10 @@ FOR EACH ROW
     END;//
 
 DELIMITER ;
+
+CREATE TRIGGER svejate BEFORE SELECT ON Donatore
+FOR EACH ROW
+    BEGIN
+        SET 
+    
+    END;
