@@ -5,10 +5,12 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
+
     app.config['SQLALCHEMY_DATABASE_URI'] = (
         'mysql+mysqlconnector://root:polpetta@172.20.0.2:3306/Users?ssl_disabled=True'
     )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.secret_key = 'supersegretokey123'  # Per sicurezza, gestisci tramite env
 
     db.init_app(app)
 
@@ -19,4 +21,3 @@ def create_app():
     app.register_blueprint(auth_bp)
 
     return app
-

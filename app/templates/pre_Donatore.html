@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registrazione Ospedale</title>
+  <title>Login Donatore</title>
   <link rel="stylesheet" href="static/css/Stile.css">
-  
 </head>
 <body>
 
@@ -35,10 +34,15 @@
       <span class="close" onclick="closeModal()">&times;</span>
       <h2>Accedi</h2>
       <form id="loginForm">
-        <input type="text" name="username" placeholder="Username" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" placeholder="Username" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" placeholder="Password" required><br>
+
         <button type="submit" class="btn">Login</button>
       </form>
+      <p><a href="#">Password dimenticata?</a></p>
     </div>
   </div>
 
@@ -50,27 +54,31 @@
   <script>
     function openModal() {
       document.getElementById("loginModal").style.display = "block";
-      document.getElementById("formRegistrazioneOspedale").style.display = "none";
     }
 
     function closeModal() {
       document.getElementById("loginModal").style.display = "none";
     }
 
-    function mostraFormRegistrazione() {
-      document.getElementById("formRegistrazioneOspedale").style.display = "block";
-      document.getElementById("loginModal").style.display = "none";
-      document.getElementById("formRegistrazioneOspedale").scrollIntoView({ behavior: "smooth" });
-    }
-
+    // Gestione login
     document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const tipo = document.querySelector('input[name="tipo"]:checked').value;
-      if (tipo === "ospedale") {
-        window.location.href = "/dashboardOspedale";
-      } else {
-        window.location.href = "/dashboardDonatore";
-      }
+      const username = document.querySelector('#loginForm input[name="username"]').value;
+      const password = document.querySelector('#loginForm input[name="password"]').value;
+
+      fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username, password: password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = "/dashboardDonatore";  // Rinomina con la tua destinazione finale
+        } else {
+          alert(data.error || "Errore di login");
+        }
+      });
     });
   </script>
 

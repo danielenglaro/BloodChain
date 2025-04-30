@@ -12,6 +12,14 @@ bp = Blueprint('routes', __name__)
 def index():
     return render_template("Landing_Page.html")
 
+@bp.route("/accessoDonatore", methods=["GET"])
+def accessoDonatore():
+    return render_template("pre_Ospedale.html") 
+
+@bp.route("/accessoOspedale", methods=["GET"])
+def accessoOpsedale():
+    return render_template("pre_Donatore.html")  
+
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
