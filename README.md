@@ -31,3 +31,6 @@ Modificato il nome del database quindi ricreare il container
 ##Login
 Quando un ospedale si registra viene composto un blocco che contiene i dati dell'ospedale, ADDKV con un payload equivalente alle colonne dell'attuale tabella Dati_Ospedale. Quando un ospedale fa login inserisce username e pw, che rapprensentano la coppia chiave che viene preso per lanciare la GETKV, in modo che nella sessione abbiamo tutte le info dell'ospedale. 
 Quando facciamo ad esempio una ADDKV, compone le variabili locali che vengono accodate a tutte le operazioni necessarie, in questo modo la pagina ha il contesto di chi sta utilizzando la pagina.
+
+##Sensore
+Prima di accorpare un tot di transazioni, scorriamo il csv a caccia di un eventuale problema di range temperatura, se il test ha successo avviene l'ADDKV (creare Payload adhoc per le temperature) sulla blockchain direttamente.
