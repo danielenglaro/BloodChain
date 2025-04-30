@@ -1,6 +1,6 @@
-CREATE DATABASE Users;
+CREATE DATABASE BloodBase;
 
-USE Users;
+USE BloodBase;
 
 CREATE TABLE Donatori(
     CF VARCHAR(200),

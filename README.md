@@ -23,3 +23,11 @@ BloodChain dal suo sito vuole fornire uno strumento ad ospedali e donatori. I pr
 ## TODO da Lezione
 - Cifrare i paylaod per interi
 - Per fare il login non facciamo il controllo degli hash, mandaimo al db i dati in chiaro e tutto l'hash con sale avviene direttamente li. Quindi quando il backend invoca un controllo fa la chiamata in chiaro, il db prende hasha e controlla.
+
+
+##TODO
+Modificato il nome del database quindi ricreare il container
+
+##Login
+Quando un ospedale si registra viene composto un blocco che contiene i dati dell'ospedale, ADDKV con un payload equivalente alle colonne dell'attuale tabella Dati_Ospedale. Quando un ospedale fa login inserisce username e pw, che rapprensentano la coppia chiave che viene preso per lanciare la GETKV, in modo che nella sessione abbiamo tutte le info dell'ospedale. 
+Quando facciamo ad esempio una ADDKV, compone le variabili locali che vengono accodate a tutte le operazioni necessarie, in questo modo la pagina ha il contesto di chi sta utilizzando la pagina.

@@ -14,11 +14,11 @@ def index():
 
 @bp.route("/accessoDonatore", methods=["GET"])
 def accessoDonatore():
-    return render_template("pre_Ospedale.html") 
+    return render_template("pre_Donatore.html") 
 
 @bp.route("/accessoOspedale", methods=["GET"])
 def accessoOpsedale():
-    return render_template("pre_Donatore.html")  
+    return render_template("pre_Ospedale.html")  
 
 
 @bp.route("/login", methods=["GET", "POST"])
@@ -106,4 +106,4 @@ def dashboard_ospedale():
 
 @bp.route("/dashboardDonatore")
 def dashboard_donatore():
-    return render_template("Donatore_dashboard.html")
+    return render_template("Donatore_dashboard.html", codiceFiscale = session['codiceFiscale '])
