@@ -104,27 +104,47 @@
       document.getElementById("loginModal").style.display = "block";
       document.getElementById("formRegistrazioneOspedale").style.display = "none";
     }
-
+  
     function closeModal() {
       document.getElementById("loginModal").style.display = "none";
     }
-
+  
     function mostraFormRegistrazione() {
       document.getElementById("formRegistrazioneOspedale").style.display = "block";
       document.getElementById("loginModal").style.display = "none";
       document.getElementById("formRegistrazioneOspedale").scrollIntoView({ behavior: "smooth" });
     }
-
+  
     document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const tipo = document.querySelector('input[name="tipo"]:checked').value;
-      if (tipo === "ospedale") {
-        window.location.href = "/dashboardOspedale";
-      } else {
-        window.location.href = "/dashboardDonatore";
-      }
+  
+      const username = document.querySelector('#loginForm input[name="username"]').value;
+      const password = document.querySelector('#loginForm input[name="password"]').value;
+  
+      // Debug: Verifica che i dati vengano presi correttamente
+      console.log("Username:", username);
+      console.log("Password:", password);
+  
+      // Invio dei dati al server con fetch
+      fetch("/login_ospedale", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username, password: password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data); // Debug: Stampa la risposta dal server
+        if (data.success) {
+          window.location.href = "/dashboardOspedale";  // Rinomina con la tua destinazione finale
+        } else {
+          alert(data.error || "Errore di login");
+        }
+      })
+      .catch(err => {
+        console.error("Errore nella richiesta:", err); // Debug: Stampa eventuali errori nella richiesta
+      });
     });
   </script>
-
+  
 </body>
 </html>
