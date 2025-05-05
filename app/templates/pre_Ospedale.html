@@ -126,7 +126,7 @@
       console.log("Password:", password);
   
       // Invio dei dati al server con fetch
-      fetch("/login_ospedale", {
+      fetch("/loginOspedale", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: username, password: password })

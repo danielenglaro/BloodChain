@@ -1,11 +1,13 @@
 from . import db
 
 class Ospedale(db.Model):
-    __tablename__ = 'Ospedali'
+    __tablename__ = 'Ospedali'  # <- rispettare la maiuscola del nome tabella
+
     Usrnm = db.Column(db.String(200), primary_key=True)
     Pwd = db.Column(db.String(200), primary_key=True)
 
 class Donatore(db.Model):
     __tablename__ = 'Donatori'
-    Usrnm = db.Column(db.String(200), primary_key=True)
+
+    CF = db.Column(db.String(200), primary_key=True)
     Pwd = db.Column(db.String(200), primary_key=True)

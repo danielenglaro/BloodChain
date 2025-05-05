@@ -14,7 +14,7 @@ def Add_kv(class_name, **kwargs):
     global next_id
     
     # Impostiamo l'URL dell'API che riceverà la richiesta
-    url = "http://172.18.0.1:55556/api"
+    url = "http://localhost:55556/api"
 
     # Prepariamo la base del payload
     payload = {
