@@ -28,11 +28,7 @@ def Add_kv(class_name, **kwargs):
         payload["value"] = json.dumps({
             "id": next_id,
             "donatore": kwargs.get("donatore"),                     # Codice fiscale o altro identificatore anagrafico del donatore
-            "data": kwargs.get("data"),                             # Data della donazione (da ggiungere 1 mese per avere la scadenza)
             "gruppo": kwargs.get("gruppo"),                         # Gruppo sanguigno (aggiungere nel caso "l'igenizzazione" per avere solamente A,B,AB,0 (+,-))
-            "fruibile": kwargs.get("fruibile"),                     # Se la sacca è fruibile o come dicono le persone normali (utilizzabile)
-            "scadenza": kwargs.get("scadenza"),                     # Scadenza della sacca 
-            "luogo": kwargs.get("luogo")                            # Luogo della donazione
         })
     elif class_name == "Sacca":
         payload["class"] = "Sacca"
@@ -44,9 +40,27 @@ def Add_kv(class_name, **kwargs):
             "donatore": kwargs.get("donatore"),                     # Codice fiscale del donatore
             "gruppo_sanguigno": kwargs.get("gruppo_sanguigno"),     # Gruppo sanguigno
             "data_inserimento": kwargs.get("data_inserimento"),     # Data inserimento
+            "fruibile": kwargs.get("fruibile"),                     # Se la sacca è fruibile o come dicono le persone normali (utilizzabile)2
+            "luogo": kwargs.get("luogo"),                         # Luogo della donazione 
             "test": kwargs.get("test", []),                         # Lista dei test associati
             "info": kwargs.get("info", [])                          # Stato della sacca (in transito, giacenza, danneggiata)
         })
+    elif class_name == "DatiOspedale":
+        payload["class"] = "DatiOspedale"
+        payload["value"] = json.dumps({
+            "id": next_id,
+            "nome": kwargs.get("nome"),                             # Nome ufficiale dell'ospedale
+            "codice_identificativo": kwargs.get("codice_identificativo"),  # Codice identificativo
+            "partita_iva_cf": kwargs.get("partita_iva_cf"),         # Partita IVA o Codice Fiscale
+            "indirizzo": kwargs.get("indirizzo"),                   # Indirizzo dell'ospedale
+            "coordinate_gps": kwargs.get("coordinate_gps", ""),     # Coordinate GPS (opzionale)
+            "regione": kwargs.get("regione"),                       # Regione
+            "comune": kwargs.get("comune"),                         # Comune
+            "telefono": kwargs.get("telefono"),                     # Telefono dell'ospedale
+            "email_dedicata": kwargs.get("email_dedicata"),         # Email dedicata
+            "sito_web": kwargs.get("sito_web", "")                   # Sito web dell'ospedale (opzionale)
+        })
+
     elif class_name == "Emoteca/SPOC":
         payload["class"] = "Emoteca/SPOC"
         payload["value"] = json.dumps({
