@@ -23,3 +23,6 @@ BloodChain dal suo sito vuole fornire uno strumento ad ospedali e donatori. I pr
 ## TODO da Lezione
 - Cifrare i paylaod per interi
 - Per fare il login non facciamo il controllo degli hash, mandaimo al db i dati in chiaro e tutto l'hash con sale avviene direttamente li. Quindi quando il backend invoca un controllo fa la chiamata in chiaro, il db prende hasha e controlla.
+
+- Rotazione chiave per i cookie 
+- Prendere coordinate open street maps
