@@ -1,26 +1,67 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from datetime import datetime, timedelta
 from app.api import Add_kv
-from app.models import User
+from app.models import Ospedale
 from app import db
 from app.utils import hash_with_salt  
 
 
-bp = Blueprint('routes', __name__)
+bp = Blueprint('routes', _name_)
 
 @bp.route("/")
 def index():
     return render_template("Landing_Page.html")
 
-@bp.route("/accessoDonatore", methods=["GET"])
-def accessoDonatore():
-    return render_template("pre_Donatore.html") 
+@bp.route("/autenticazioneOspedale")
+def authOspedale():
+    #Qui dobbiamo inserire lo script per effettuare il login e la registrazione
+    return render_template("pre_Ospedale.html")
 
-@bp.route("/accessoOspedale", methods=["GET"])
-def accessoOpsedale():
-    return render_template("pre_Ospedale.html")  
+@bp.route("/submitRegistrazioneOspedale", methods=["POST"])
+def registrazione_ospedale():
+    # 1. Dati dal form
+    nome = request.form.get("nome")
+    codice_identificativo = request.form.get("codice_identificativo")
+    partita_iva_cf = request.form.get("partita_iva_cf")
+    indirizzo = request.form.get("indirizzo")
+    coordinate_gps = request.form.get("coordinate_gps")
+    regione = request.form.get("regione")
+    comune = request.form.get("comune")
+    telefono = request.form.get("telefono")
+    email_dedicata = request.form.get("email_dedicata")
+    sito_web = request.form.get("sito_web")
 
+    # Credenziali (senza hash)
+    email = request.form.get("email")
+    password = request.form.get("password")
 
+    if not email or not password:
+        return render_template("Landing_Page.html", esito={"error": "Email e password obbligatorie"})
+
+    # 2. Salva nel DB (solo email + password in chiaro)
+    nuovo_user = Ospedale(Usrnm=email, Pwd=password)
+    db.session.add(nuovo_user)
+    db.session.commit()
+
+    # 3. Salva su blockchain
+    result = Add_kv(
+        class_name="DatiOspedale",
+        nome=nome,
+        codice_identificativo=codice_identificativo,
+        partita_iva_cf=partita_iva_cf,
+        indirizzo=indirizzo,
+        coordinate_gps=coordinate_gps,
+        regione=regione,
+        comune=comune,
+        telefono=telefono,
+        email_dedicata=email_dedicata,
+        sito_web=sito_web
+    )
+
+    if "error" in result:
+        return render_template("Landing_Page.html", esito={"error": f"Errore blockchain: {result['error']}"})
+
+    return render_template("Ospedale_dashboard.html", esito={"success": "Registrazione avvenuta con successo!"})
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -106,4 +147,4 @@ def dashboard_ospedale():
 
 @bp.route("/dashboardDonatore")
 def dashboard_donatore():
-    return render_template("Donatore_dashboard.html", codiceFiscale = session['codiceFiscale '])
+    return render_template("Donatore_dashboard.html")
