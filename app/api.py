@@ -10,7 +10,7 @@ next_id = 1
 # AddKv prende come parametro il class_name, per per instradre correttamente nello switch del payload corretto da attaccare al json. Il secondo parametro è l'insieme dei parametri
 # necessari alla corretta assegnazione delle variabili
 
-def Add_kv(class_name, **kwargs):
+def Add_kv(class_name, key, **kwargs):
     global next_id
     
     # Impostiamo l'URL dell'API che riceverà la richiesta
@@ -19,14 +19,14 @@ def Add_kv(class_name, **kwargs):
     # Prepariamo la base del payload
     payload = {
         "cmd": "AddKV",
-        "key": str(next_id),
+        "key": str(key),
     }
 
     # Switch per gestire i vari tipi di oggetti con un unico AddKv
     if class_name == "Donatore":
         payload["class"] = "Donatore"
         payload["value"] = json.dumps({
-            "id": next_id,
+            "id": key,
             "donatore": kwargs.get("donatore"),                     # Codice fiscale o altro identificatore anagrafico del donatore
             "gruppo": kwargs.get("gruppo"),                         # Gruppo sanguigno (aggiungere nel caso "l'igenizzazione" per avere solamente A,B,AB,0 (+,-))
         })
@@ -48,7 +48,7 @@ def Add_kv(class_name, **kwargs):
     elif class_name == "DatiOspedale":
         payload["class"] = "DatiOspedale"
         payload["value"] = json.dumps({
-            "id": next_id,
+            "id": key,
             "nome": kwargs.get("nome"),                             # Nome ufficiale dell'ospedale
             "codice_identificativo": kwargs.get("codice_identificativo"),  # Codice identificativo
             "partita_iva_cf": kwargs.get("partita_iva_cf"),         # Partita IVA o Codice Fiscale

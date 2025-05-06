@@ -5,6 +5,7 @@ class Ospedale(db.Model):
 
     Usrnm = db.Column(db.String(200), primary_key=True)
     Pwd = db.Column(db.String(200), primary_key=True)
+    Id = db.Column(db.Integer)
 
 class Donatore(db.Model):
     __tablename__ = 'Donatori'

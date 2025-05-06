@@ -3,6 +3,7 @@ from app.models import Donatore, Ospedale
 from app import db
 from app.utils import hash_with_salt
 from app.api import Add_kv
+import random
 
 bp = Blueprint('routes', __name__)
 
@@ -15,6 +16,8 @@ def authOspedale():
     return render_template("pre_Ospedale.html")
 
 @bp.route("/submitRegistrazioneOspedale", methods=["POST"])
+
+
 def registrazione_ospedale():
     # Form
     nome = request.form.get("nome")
@@ -34,14 +37,18 @@ def registrazione_ospedale():
     if not email or not password:
         return render_template("Landing_Page.html", esito={"error": "Email e password obbligatorie"})
 
-    
+    # Genera ID casuale
+    id_casuale = random.randint(10**12, 10**18)
+    while Ospedale.query.filter_by(Id=id_casuale).first():
+        id_casuale = random.randint(10**12, 10**18)
 
-    nuovo_user = Ospedale(Usrnm=email, Pwd=password)
+    nuovo_user = Ospedale(Usrnm=email, Pwd=password, Id=id_casuale)
     db.session.add(nuovo_user)
     db.session.commit()
 
     result = Add_kv(
         class_name="DatiOspedale",
+        key=id_casuale,
         nome=nome,
         codice_identificativo=codice_identificativo,
         partita_iva_cf=partita_iva_cf,
@@ -53,12 +60,14 @@ def registrazione_ospedale():
         email_dedicata=email_dedicata,
         sito_web=sito_web
     )
+
     print("RISULTATO BLOCKCHAIN:", result) 
 
     if "error" in result:
         return render_template("Landing_Page.html", esito={"error": f"Errore blockchain: {result['error']}"})
 
     return render_template("Ospedale_dashboard.html", esito={"success": "Registrazione avvenuta con successo!"})
+
 
 @bp.route("/loginOspedale", methods=["POST"])
 def login():

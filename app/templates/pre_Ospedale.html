@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrazione Ospedale</title>
   <link rel="stylesheet" href="static/css/Stile.css">
-  
 </head>
 <body>
 
@@ -35,7 +34,7 @@
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
       <h2>Accedi</h2>
-      <form id="loginForm">
+      <form id="loginForm" action="/loginOspedale" method="post">
         <input type="text" name="username" placeholder="Username" required><br>
         <input type="password" name="password" placeholder="Password" required><br>
         <button type="submit" class="btn">Login</button>
@@ -44,55 +43,54 @@
   </div>
 
   <!-- FORM REGISTRAZIONE OSPEDALE -->
-<section class="section" id="formRegistrazioneOspedale" style="background-color: #fff; max-width: 1000px; margin: 3rem auto; border-radius: 16px; padding: 2rem; box-shadow: 0 0 15px rgba(0,0,0,0.1); display: none;">
-  <h2 style="color: #003366; margin-bottom: 2rem;">Registrazione Centro Ospedaliero</h2>
-  <form id="formOspedale" action="/submitRegistrazioneOspedale" method="post">
+  <section class="section" id="formRegistrazioneOspedale" style="background-color: #fff; max-width: 1000px; margin: 3rem auto; border-radius: 16px; padding: 2rem; box-shadow: 0 0 15px rgba(0,0,0,0.1); display: none;">
+    <h2 style="color: #003366; margin-bottom: 2rem;">Registrazione Centro Ospedaliero</h2>
+    <form id="formOspedale" action="/submitRegistrazioneOspedale" method="post">
 
-    <h3>Dati identificativi dell’ospedale:</h3>
-    <label>Nome ufficiale:</label>
-    <input type="text" name="nome" required>
+      <h3>Dati identificativi dell’ospedale:</h3>
+      <label>Nome ufficiale:</label>
+      <input type="text" name="nome" required>
 
-    <label>Codice identificativo:</label>
-    <input type="text" name="codice_identificativo">
+      <label>Codice identificativo:</label>
+      <input type="text" name="codice_identificativo">
 
-    <label>Partita IVA / Codice Fiscale:</label>
-    <input type="text" name="partita_iva_cf">
+      <label>Partita IVA / Codice Fiscale:</label>
+      <input type="text" name="partita_iva_cf">
 
-    <h3>📍 Informazioni sulla sede:</h3>
-    <label>Indirizzo completo:</label>
-    <input type="text" name="indirizzo" required>
+      <h3>📍 Informazioni sulla sede:</h3>
+      <label>Indirizzo completo:</label>
+      <input type="text" name="indirizzo" required>
 
-    <label>Coordinate GPS (opzionale):</label>
-    <input type="text" name="coordinate_gps">
+      <label>Coordinate GPS (opzionale):</label>
+      <input type="text" name="coordinate_gps">
 
-    <label>Regione:</label>
-    <input type="text" name="regione">
+      <label>Regione:</label>
+      <input type="text" name="regione">
 
-    <label>Comune:</label>
-    <input type="text" name="comune">
+      <label>Comune:</label>
+      <input type="text" name="comune">
 
-    <h3>📞 Contatti:</h3>
-    <label>Telefono:</label>
-    <input type="tel" name="telefono" required>
+      <h3>📞 Contatti:</h3>
+      <label>Telefono:</label>
+      <input type="tel" name="telefono" required>
 
-    <label>Email dedicata:</label>
-    <input type="email" name="email_dedicata" required>
+      <label>Email dedicata:</label>
+      <input type="email" name="email_dedicata" required>
 
-    <label>Sito web (opzionale):</label>
-    <input type="url" name="sito_web">
+      <label>Sito web (opzionale):</label>
+      <input type="url" name="sito_web">
 
-    <h3>🔒 Credenziali di accesso:</h3>
-    <label>Email per login:</label>
-    <input type="email" name="email" required>
+      <h3>🔒 Credenziali di accesso:</h3>
+      <label>Email per login:</label>
+      <input type="email" name="email" required>
 
-    <label>Password:</label>
-    <input type="password" name="password" required>
+      <label>Password:</label>
+      <input type="password" name="password" required>
 
-    <br><br>
-    <button type="submit" class="btn">Registrati</button>
-  </form>
-</section>
-4
+      <br><br>
+      <button type="submit" class="btn">Registrati</button>
+    </form>
+  </section>
 
   <footer>
     <p>&copy; 2025 Dona Sangue - Tutti i diritti riservati</p>
@@ -104,47 +102,17 @@
       document.getElementById("loginModal").style.display = "block";
       document.getElementById("formRegistrazioneOspedale").style.display = "none";
     }
-  
+
     function closeModal() {
       document.getElementById("loginModal").style.display = "none";
     }
-  
+
     function mostraFormRegistrazione() {
       document.getElementById("formRegistrazioneOspedale").style.display = "block";
       document.getElementById("loginModal").style.display = "none";
       document.getElementById("formRegistrazioneOspedale").scrollIntoView({ behavior: "smooth" });
     }
-  
-    document.getElementById("loginForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-  
-      const username = document.querySelector('#loginForm input[name="username"]').value;
-      const password = document.querySelector('#loginForm input[name="password"]').value;
-  
-      // Debug: Verifica che i dati vengano presi correttamente
-      console.log("Username:", username);
-      console.log("Password:", password);
-  
-      // Invio dei dati al server con fetch
-      fetch("/loginOspedale", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username, password: password })
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data); // Debug: Stampa la risposta dal server
-        if (data.success) {
-          window.location.href = "/dashboardOspedale";  // Rinomina con la tua destinazione finale
-        } else {
-          alert(data.error || "Errore di login");
-        }
-      })
-      .catch(err => {
-        console.error("Errore nella richiesta:", err); // Debug: Stampa eventuali errori nella richiesta
-      });
-    });
   </script>
-  
+
 </body>
 </html>

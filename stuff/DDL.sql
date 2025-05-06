@@ -10,8 +10,9 @@ CREATE TABLE Donatori(
 )Engine= InnoDB;
 
 CREATE TABLE Ospedali(
-    Username VARCHAR(200),
+    Usrnm VARCHAR(200),
     Pwd VARCHAR(200),
+    Id INT,
 
-    PRIMARY KEY(Username, Pwd)
+    PRIMARY KEY(Usrnm, Pwd)
 )Engine= InnoDB;
