@@ -27,9 +27,8 @@ def Add_kv(class_name, key, **kwargs):
         payload["class"] = "Donatore"
         payload["value"] = json.dumps({
             "id": key,
-            "donatore": kwargs.get("donatore"),                     # Codice fiscale o altro identificatore anagrafico del donatore
-            "gruppo": kwargs.get("gruppo"),                         # Gruppo sanguigno (aggiungere nel caso "l'igenizzazione" per avere solamente A,B,AB,0 (+,-))
-        })
+            "pwd": kwargs.get("pwd")
+    })
     elif class_name == "Sacca":
         payload["class"] = "Sacca"
         payload["value"] = json.dumps({
@@ -81,9 +80,10 @@ def Add_kv(class_name, key, **kwargs):
         payload["class"] = "Test"
         payload["value"] = json.dumps({
             "id": next_id,
-            "tipo": kwargs.get("tipo"),                             # Tipo di test (preliminare, emocromo, etc.)
-            "valori": kwargs.get("valori", []),                     # Lista dei valori del test
-            "esito": kwargs.get("esito")                            # Esito del test (positivo/negativo)
+            "filename": kwargs.get("filename"),                             # Tipo di test (preliminare, emocromo, etc.)
+            "content": kwargs.get("content"),                     # Lista dei valori del test
+            "esito": kwargs.get("esito"),                            # Esito del test (positivo/negativo)
+            "content-type": kwargs.get("content-type")
         })
     elif class_name == "Transito":
         payload["class"] = "Transito"
@@ -112,6 +112,30 @@ def Add_kv(class_name, key, **kwargs):
                 next_id += 1
                 return data
             return {"error": "Formato di risposta inatteso"}
+        return {"error": f"Errore API: {response.status_code}"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def Get_kv(class_name, key):
+    url = "http://localhost:55556/api"  # o l'IP corretto, se cambi
+
+    payload = {
+        "cmd": "GetKV",
+        "class": class_name,
+        "key": str(key)
+    }
+
+    try:
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("success") and "answer" in data:
+                # Decodifica il campo JSON 'value' annidato come stringa
+                value_json = data["answer"].get("value", "{}")
+                value = json.loads(value_json)
+                return value  # restituisce un dizionario con i dati effettivi
+            return {"error": "Risposta senza campo 'answer' valido"}
         return {"error": f"Errore API: {response.status_code}"}
     except Exception as e:
         return {"error": str(e)}

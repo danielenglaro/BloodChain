@@ -172,6 +172,8 @@ footer {
   justify-content: center;
   align-items: center;
   z-index: 2000;
+  overflow-y:scroll;
+  scroll-behavior: smooth;
 }
 
 .popup-content {
@@ -251,6 +253,21 @@ footer {
   margin-top: 3rem;
 }
 
+  .alert {
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  .alert.success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  .alert.error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
 .notification-list {
   display: flex;
   flex-direction: column;
@@ -316,7 +333,7 @@ footer {
   margin-top: 10px;
 }
 
-.login-btn {
+.login-btn, .register-btn {
   background-color: #1a237e; /* blu scuro */
   color: white;
   border: none;
@@ -328,7 +345,7 @@ footer {
   transition: background-color 0.3s ease;
 }
 
-.login-btn:hover {
+.login-btn:hover, .register-btn:hover {
   background-color: #0d165c;
 }
 

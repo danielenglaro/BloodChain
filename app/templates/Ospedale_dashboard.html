@@ -14,16 +14,18 @@
       <a href="/dashboardOspedale">Ospedale</a>
       <a href="/dashboardDonatore">Donatore</a>
     </nav>
+    <!-- Esempio di visualizzazione dei dati -->
   </header>
 
   <main class="dashboard">
     <section class="overview">
       <h2>Statistiche Generali</h2>
       <div class="stats">
-        <div class="stat">🔴 <strong>120</strong> sacche disponibili</div>
-        <div class="stat">🧬 <strong>58</strong> pali ricevuti da pallino</div>
-        <div class="stat">🚑 <strong>32</strong> richieste urgenti evase</div>
-        <div class="stat">📦 <strong>8</strong> consegne in corso</div>
+        <div class="stat">🔴 <strong id="totsacche"></strong> sacche registrate</div>
+        <div class="stat">🧬 <strong id="sacchepresenti"></strong> sacche presenti in loco</div>
+        <div class="stat">🚑 <strong id="transitoinarrivo"></strong> consegne in arrivo</div>
+        <div class="stat">  <strong id="transitoinuscita"></strong> consegne in uscita</div>
+        <div class="stat">📦 <strong id="tottransiti"></strong> consegne in corso nel globo</div>
       </div>
     </section>
 
@@ -34,9 +36,11 @@
         <button onclick="openForm('richiediSangue')">🩸 Richiedi sangue</button>
         <button onclick="openForm('aggiornaStato')">🔄 Aggiorna stato</button>
         <button onclick="openForm('aggiungiEmoteca')">🏥 Aggiungi Emoteca/SPOC</button>
-
+        <button onclick="openForm('caricaDocumentazione')">📃 Carica Documentazione</button>
+        <button onclick="openForm('reimpostaDonatore')">🧑‍🦰 Reimposta Donatore</button> <!-- Questo -->
       </div>
     </section>
+    
   </main>
 
   
@@ -59,6 +63,24 @@
         </form>
       </div>
     </div>
+    <div class="popup" id="reimpostaDonatore">
+      <div class="popup-content">
+        <span class="close" onclick="closeForm('reimpostaDonatore')">&times;</span>
+        <h3>Registrazione Donatore</h3>
+        
+        <form method="POST" action="/resetDonatore">
+          <label>Codice Fiscale:</label>
+          <input type="text" name="codice_fiscale" pattern="^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$" required>
+    
+          <button type="submit">Registrati</button>
+           
+        </form>
+      </div>
+    </div>
+    <div class="esito" style="display: none;">
+       {{esito}} 
+    </div>
+
 
     <!-- Tabella per visualizzare le sacche dell'emoteca -->
     <section class="tabella-emoteca">
@@ -89,9 +111,9 @@
         <label>Tipo:</label>
         <select name="tipo" required>
           <option value="">-- Seleziona --</option>
-          <option value="Intera">Intera</option>
-          <option value="Plasma">Plasma</option>
-          <option value="Piastrine">Piastrine</option>
+          <option value="I">Intera</option>
+          <option value="Pl">Plasma</option>
+          <option value="Pia">Piastrine</option>
         </select>
   
         <label>Quantità (ml):</label>
@@ -170,6 +192,27 @@
         <input type="text" name="sacche" placeholder="SAC001, SAC002">
   
         <button type="submit">Crea Emoteca</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="popup" id="caricaDocumentazione">
+    <div class="popup-content">
+      <span class="close" onclick="closeForm('caricaDocumentazione')">&times;</span>
+      <h3>Carica Documentazione</h3>
+      <form method="POST" enctype="multipart/form-data" action="/caricaDocumentazione">
+        <label>Esito:</label>
+        <select name="esito" required>
+          <option value="">-- Seleziona --</option>
+          <option>Positivo</option>
+          <option>Negativo</option>
+        </select>
+
+        <label>Documento:</label>
+        <input type="file" name="document" required>
+        
+        <label><h5>Assicurarsi che il nome file sia nel formato CodiceFiscale-Data-NomeTest.pdf</h5></label>
+        <button type="submit">Carica Documentazione</button>
       </form>
     </div>
   </div>
@@ -260,7 +303,18 @@
       });
     }
 
+    //stat fetcher
+    const eventSource = new EventSource('/stats');
 
+    eventSource.onmessage = function(event){
+      const stats = JSON.parse(event.data);
+      if (stats != "no_change_or_default"){
+        document.getElementById('totsacche').innerText = stats.tot_sacche;
+        document.getElementById('sacchepresenti').innerText = stats.num_sacche;
+      }else{
+        console.log("zero, chosba, nada")
+      }
+    }
         // Mostra le sacche di una emoteca in un popup
     function visualizzaSacche(emotecaIndex) {
       const lista = document.getElementById('listaSacche');
@@ -281,6 +335,12 @@
       openForm('popupSacche'); // Mostra il popup
     }
 
+    document.addEventListener("DOMContentLoaded", function () {
+      const esito = document.querySelector(".esito").textContent.trim();
+      if (esito) {
+        window.alert(esito);  
+      }
+    });
 
   </script>
 </body>

@@ -13,16 +13,14 @@
   <header>
     <h1>BloodChain</h1>
     <nav>
-      <a href="/">Home</a>
-      <a href="/dashboardOspedale">Ospedale</a>
-      <a href="/dashboardDonatore">Donatore</a>
+      <button class="login-btn" onclick="openModal('loginModal')">Accedi</button>
+      <button class="register-btn" onclick="openModal('registerModal')">Registrati</button>
     </nav>
   </header>
 
   <section class="hero">
     <h1>Un piccolo gesto, una grande vita.</h1>
     <p>Ogni goccia conta. Dona sangue, salva vite.</p>
-    <button class="login-btn" onclick="openModal()">Login</button>
 
     <div class="stats-marquee">
       <p>Donati 1340 Litri di seme • 400 caffé sprecati • 5000 chat inutili • +150 pali totali • Svejate • Alessio Svejate </p>
@@ -66,9 +64,9 @@
   <!-- MODAL LOGIN -->
   <div id="loginModal" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
+      <span class="close" onclick="closeModal('loginModal')">&times;</span>
       <h2>Accedi</h2>
-      <form id="loginForm">
+      <form id="loginForm" method="POST">
         <label><input type="radio" name="tipo" value="ospedale" checked> Ospedale</label>
         <label><input type="radio" name="tipo" value="donatore"> Donatore</label><br><br>
 
@@ -76,6 +74,58 @@
         <input type="password" name="password" placeholder="Password" required><br>
 
         <button type="submit" class="btn">Login</button>
+      </form>
+    </div>
+  </div>
+  <!-- MODAL REGISTRATION-->
+   <div class="modal" id="registerModal" style="background-color: #fff; max-width: 1000px; margin: 3rem auto; border-radius: 16px; padding: 2rem; box-shadow: 0 0 15px rgba(0,0,0,0.1); display: none;">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('registerModal')">&times;</span>
+      <h2 style="color: #003366; margin-bottom: 2rem;">Registrazione Centro Ospedaliero</h2>
+      <form id="formOspedale" action="/submitRegistrazioneOspedale" method="post">
+
+        <h3>Dati identificativi dell’ospedale:</h3>
+        <label>Nome ufficiale:</label>
+        <input type="text" name="nome" required>
+
+        <label>Codice identificativo:</label>
+        <input type="text" name="codice_identificativo">
+
+        <label>Partita IVA / Codice Fiscale:</label>
+        <input type="text" name="partita_iva_cf">
+
+        <h3>📍 Informazioni sulla sede:</h3>
+        <label>Indirizzo completo:</label>
+        <input type="text" name="indirizzo" required>
+
+        <label>Coordinate GPS (opzionale):</label>
+        <input type="text" name="coordinate_gps">
+
+        <label>Regione:</label>
+        <input type="text" name="regione">
+
+        <label>Comune:</label>
+        <input type="text" name="comune">
+
+        <h3>📞 Contatti:</h3>
+        <label>Telefono:</label>
+        <input type="tel" name="telefono" required>
+
+        <label>Email dedicata:</label>
+        <input type="email" name="email_dedicata" required>
+
+        <label>Sito web (opzionale):</label>
+        <input type="url" name="sito_web">
+
+        <h3>🔒 Credenziali di accesso:</h3>
+        <label>Email per login:</label>
+        <input type="email" name="email" required>
+
+        <label>Password:</label>
+        <input type="password" name="password" required>
+
+        <br><br>
+        <button type="submit" class="btn">Registrati</button>
       </form>
     </div>
   </div>
@@ -88,24 +138,34 @@
 
 <script>
   
-  function openModal() {
-  document.getElementById("loginModal").style.display = "block";
+function openModal(id) {
+  document.getElementById(id).style.display = "block";
 }
 
-function closeModal() {
-  document.getElementById("loginModal").style.display = "none";
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
 }
 
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-  e.preventDefault();
+document.getElementById("loginModal").addEventListener("submit", function(e) {
   const tipo = document.querySelector('input[name="tipo"]:checked').value;
-  if (tipo === "ospedale") {
-    window.location.href = "/dashboardOspedale";
-  } else {
-    window.location.href = "/dashboardDonatore";
-  }
+  const form = e.target;
+
+  form.action = tipo === "ospedale" ? "/loginOspedale" : "/loginDonatore";  
 });
 
+function getCookie(name) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+        const [key, value] = cookie.split('=');
+        if (key === name) {
+            return decodeURIComponent(value);
+        }
+    }
+    return null;
+}
 
+document.addEventListener("DOMContentLoaded", () => {
+  
+});
 </script>
 </html>
