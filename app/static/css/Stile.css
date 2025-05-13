@@ -309,7 +309,7 @@ footer {
   background-color: #fff;
   margin: 10% auto;
   padding: 30px;
-  width: 300px;
+  width: 50%;
   border-radius: 8px;
   text-align: center;
   box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
@@ -317,14 +317,16 @@ footer {
 
 .close {
   float: right;
+  text-align: right;
   font-size: 28px;
   font-weight: bold;
   cursor: pointer;
+  width: 100%;
 }
 
 .modal-content input[type="text"],
 .modal-content input[type="password"] {
-  width: 90%;
+  width: 100%;
   padding: 8px;
   margin: 10px 0;
 }
@@ -469,7 +471,7 @@ form input, form label {
   margin: 10% auto;
   padding: 2rem;
   border: 1px solid #888;
-  width: 300px;
+  width: 50%;
   border-radius: 12px;
 }
 

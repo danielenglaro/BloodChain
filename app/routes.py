@@ -346,7 +346,8 @@ def stats():
             if stat_value:
                 yield f"data: {stat_value.decode()}\n\n"
             else:
-                yield f"data: {"no_change_or_default"}\n\n"
+                yield "data: no_change_or_default\n\n"
+
             
             time.sleep(1)
 
