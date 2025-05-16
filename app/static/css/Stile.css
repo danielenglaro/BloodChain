@@ -7,15 +7,16 @@
 }
 
 body {
+  background-image: url('./sfondop.png');
+  background-size: cover;
   line-height: 1.6;
   color: #333;
-  background-color: #f9f9f9;
   overflow-x: hidden;
 }
 
 /* Header */
 header {
-  background-color: #003366;
+  background-color: #1a237e;
   color: white;
   padding: 1rem 2rem;
   display: flex;
@@ -39,18 +40,26 @@ header nav a:hover {
 
 /* Hero Section */
 .hero {
-  background: url('/sfondo2.png') no-repeat center center/cover;
+  height: 10%;
+  display: flexbox;
   color: white;
   padding: 6rem 2rem;
   text-align: center;
-  position: relative;
+  position: sticky;
+  top: 0;
 }
 
+.h1{
+  position: sticky;
+  top: 0;
+}
 .hero h1 {
   font-size: 3rem;
   margin-bottom: 1rem;
 }
-
+.p{
+  position: sticky;
+}
 .hero p {
   font-size: 1.2rem;
   margin-bottom: 2rem;
@@ -69,11 +78,44 @@ header nav a:hover {
 .hero .btn:hover {
   background-color: #e6e6e6;
 }
+.requirements {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.requirement {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  padding: 1.5rem 2rem;
+  width: 220px;
+  text-align: center;
+  color: #003366;
+}
+
+.requirement h3 {
+  font-size: 2.5rem;
+  margin-bottom: 0.3rem;
+  color: #d4002a;
+  font-weight: 700;
+}
+
+.requirement p {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
 
 /* Sezioni */
 .section {
   padding: 4rem 2rem;
   text-align: center;
+  position: sticky;
+  display: flexbox;
+  padding-top: 10%;
+  top: 20%;
 }
 
 .section h2 {
@@ -87,6 +129,8 @@ header nav a:hover {
   justify-content: center;
   flex-wrap: wrap;
   gap: 2rem;
+  position: sticky;
+  top: 0;
 }
 
 .benefit {
@@ -336,7 +380,7 @@ footer {
 }
 
 .login-btn, .register-btn {
-  background-color: #1a237e; /* blu scuro */
+  background-color: #d4002a; /* blu scuro */
   color: white;
   border: none;
   padding: 15px 30px;
@@ -349,6 +393,35 @@ footer {
 
 .login-btn:hover, .register-btn:hover {
   background-color: #0d165c;
+}
+
+.scrolling-banner {
+  background-color: #d4002a; /* rosso sangue */
+  color: white;
+  padding: 0.8rem 0;
+  overflow: hidden;
+  position: sticky;
+  top: 50%;
+  font-weight: 700;
+  font-size: 1.2rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.scrolling-banner p {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scroll-left 15s linear infinite;
+  margin: 0;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 /* Tabella Emoteca/SPOC */
@@ -489,4 +562,7 @@ form input, form label {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+body.modal-open {
+  overflow: hidden;
 }

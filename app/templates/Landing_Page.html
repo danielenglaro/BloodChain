@@ -9,7 +9,7 @@
 
   
 </head>
-<body>
+<body style="position: sticky; top: 0;">
   <header>
     <h1>BloodChain</h1>
     <nav>
@@ -18,49 +18,34 @@
     </nav>
   </header>
 
-  <section class="hero">
-    <h1>Un piccolo gesto, una grande vita.</h1>
-    <p>Ogni goccia conta. Dona sangue, salva vite.</p>
 
-    <div class="stats-marquee">
-      <p>Donati 1340 Litri di seme • 400 caffé sprecati • 5000 chat inutili • +150 pali totali • Svejate • Alessio Svejate </p>
-    </div>
-  </section>
-
-  <section class="section" id="perche-donare">
-    <h2>Perché Donare?</h2>
-    <div class="benefits">
-      <div class="benefit">
-        <h3>Salvi vite</h3>
-        <p>Ogni donazione può aiutare fino a 3 pirdò.</p>
-      </div>
-      <div class="benefit">
-        <h3>Controllo gratuito</h3>
-        <p>Ogni donazione include un check-up della tua salute, svejate.</p>
-      </div>
-      <div class="benefit">
-        <h3>Gesto solidale</h3>
-        <p>Contribuisci a una società più piccata.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="news">
-    <h2>Ultime News</h2>
-    <div class="news">
-      <article>
-        <h3>Giornata mondiale del donatore</h3>
-        <p>Unisciti a noi il 14 giugno per celebrare chi salva vite ogni giorno.</p>
-      </article>
-      <article>
-        <h3>Mici?</h3>
-        <p>Durante l'estate le scorte calano. Prenota ora la tua donazione.</p>
-      </article>
-    </div>
-  </section>
-
-  <br>
+  <section class="section" id="requisiti-donatore" style="padding-top: 1%; padding-bottom: 5%;">
     
+    
+    <h2>Principali requisiti per diventare donatore</h2>
+  
+    <div class="requirements">
+      <div class="requirement">
+        <h3>18-60</h3>
+        <p>Età compresa fra i 18 e 60 anni</p>
+      </div>
+      <div class="requirement">
+        <h3>+50 kg</h3>
+        <p>Peso corporeo superiore a 50 kg</p>
+      </div>
+      <div class="requirement">
+        <h3>Stile di vita sano</h3>
+        <p>ed equilibrato</p>
+      </div>
+    </div>
+  </section>
+  
+  <div class="scrolling-banner">
+    <p>Sei un aspirante donatore? Scopri i requisiti fondamentali per donare il sangue! Unisciti a noi e salva vite.</p>
+  </div>
+  
+  
+
   <!-- MODAL LOGIN -->
   <div id="loginModal" class="modal">
     <div class="modal-content">
@@ -152,6 +137,23 @@ document.getElementById("loginModal").addEventListener("submit", function(e) {
 
   form.action = tipo === "ospedale" ? "/loginOspedale" : "/loginDonatore";  
 });
+
+function openModal(id) {
+  document.getElementById(id).style.display = "block";
+  document.body.classList.add("modal-open"); // blocca scroll
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+  
+  // Controlla se ci sono altri modali ancora aperti
+  const anyOpen = document.querySelectorAll('.modal')
+    && Array.from(document.querySelectorAll('.modal')).some(modal => modal.style.display === 'block');
+  
+  if (!anyOpen) {
+    document.body.classList.remove("modal-open"); // sblocca scroll solo se nessun modal è aperto
+  }
+}
 
 function getCookie(name) {
     const cookies = document.cookie.split('; ');
