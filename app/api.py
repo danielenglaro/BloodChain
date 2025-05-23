@@ -44,6 +44,7 @@ def Add_kv(class_name, key, **kwargs):
             "test": kwargs.get("test", []),                         # Lista dei test associati
             "info": kwargs.get("info", [])                          # Stato della sacca (in transito, giacenza, danneggiata)
         })
+
     elif class_name == "DatiOspedale":
         payload["class"] = "DatiOspedale"
         payload["value"] = json.dumps({
@@ -124,6 +125,29 @@ def Get_kv(class_name, key):
         "cmd": "GetKV",
         "class": class_name,
         "key": str(key)
+    }
+
+    try:
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("success") and "answer" in data:
+                # Decodifica il campo JSON 'value' annidato come stringa
+                value_json = data["answer"].get("value", "{}")
+                value = json.loads(value_json)
+                return value  # restituisce un dizionario con i dati effettivi
+            return {"error": "Risposta senza campo 'answer' valido"}
+        return {"error": f"Errore API: {response.status_code}"}
+    except Exception as e:
+        return {"error": str(e)}
+
+def GetNumKeys(class_name):
+    url = "http://localhost:55556/api"
+
+    payload = {
+        "cmd": "GetNumKeys",
+        "class": class_name,
+        "key":""
     }
 
     try:

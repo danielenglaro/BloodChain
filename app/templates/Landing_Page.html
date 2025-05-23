@@ -122,22 +122,6 @@
 </body>
 
 <script>
-  
-function openModal(id) {
-  document.getElementById(id).style.display = "block";
-}
-
-function closeModal(id) {
-  document.getElementById(id).style.display = "none";
-}
-
-document.getElementById("loginModal").addEventListener("submit", function(e) {
-  const tipo = document.querySelector('input[name="tipo"]:checked').value;
-  const form = e.target;
-
-  form.action = tipo === "ospedale" ? "/loginOspedale" : "/loginDonatore";  
-});
-
 function openModal(id) {
   document.getElementById(id).style.display = "block";
   document.body.classList.add("modal-open"); // blocca scroll
@@ -155,6 +139,13 @@ function closeModal(id) {
   }
 }
 
+document.getElementById("loginModal").addEventListener("submit", function(e) {
+  const tipo = document.querySelector('input[name="tipo"]:checked').value;
+  const form = e.target;
+
+  form.action = tipo === "ospedale" ? "/loginOspedale" : "/loginDonatore";  
+});
+
 function getCookie(name) {
     const cookies = document.cookie.split('; ');
     for (const cookie of cookies) {
@@ -166,8 +157,26 @@ function getCookie(name) {
     return null;
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
-  
+    const esitoCookie = getCookie("esito");
+    
+    if (esitoCookie) {
+        try {
+            const decoded = decodeURIComponent(esitoCookie);  // ✅ decode
+            const parsed = JSON.parse(decoded);               // ✅ parse
+            if (parsed.esito) {
+                alert(parsed.esito); // Mostra popup
+            }
+        } catch (e) {
+            console.error("Errore nel parsing del cookie:", e);
+        }
+
+        // Cancella il cookie
+        document.cookie = "esito=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
 });
+
 </script>
+
 </html>

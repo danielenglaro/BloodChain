@@ -13,9 +13,10 @@ from threading import Thread
 import random
 import json
 import base64
-import qrcode
 import time
 import redis
+from urllib.parse import quote
+
 
 bp = Blueprint('routes', __name__)
 ALLOWED_EXTENSIONS = {'pdf'}
@@ -84,10 +85,9 @@ def generaTargetta(cf_don, pwd, date):
 @bp.route("/")
 def index():
     return render_template("Landing_Page.html")
-
 @bp.route("/submitRegistrazioneOspedale", methods=["POST"])
 def registrazione_ospedale():
-    # Form
+    # Dati form
     nome = request.form.get("nome")
     codice_identificativo = request.form.get("codice_identificativo")
     partita_iva_cf = request.form.get("partita_iva_cf")
@@ -98,22 +98,27 @@ def registrazione_ospedale():
     telefono = request.form.get("telefono")
     email_dedicata = request.form.get("email_dedicata")
     sito_web = request.form.get("sito_web")
-
     email = request.form.get("email")
     password = request.form.get("password")
 
+    # Controllo campi obbligatori
     if not email or not password:
-        return render_template("Landing_Page.html", esito={"error": "Email e password obbligatorie"})
+        esito = quote(json.dumps({"esito": "Email e password obbligatorie"}))
+        response = make_response(redirect(url_for("routes.index")))
+        response.set_cookie("esito", esito)
+        return response
 
-    # Genera ID casuale
+    # ID ospedale univoco
     id_casuale = random.randint(10**12, 10**18)
     while Ospedale.query.filter_by(Id=id_casuale).first():
         id_casuale = random.randint(10**12, 10**18)
 
+    # Salvataggio nel DB
     nuovo_user = Ospedale(Usrnm=email, Pwd=password, Id=id_casuale)
     db.session.add(nuovo_user)
     db.session.commit()
 
+    # Salvataggio su blockchain
     result = Add_kv(
         class_name="DatiOspedale",
         key=id_casuale,
@@ -129,119 +134,155 @@ def registrazione_ospedale():
         sito_web=sito_web
     )
 
-    print("RISULTATO BLOCKCHAIN:", result) 
-    cookie = json.dumps({"esito": "Registrazione avvenuta con successo"})
+    # Risposta e cookie
+    if "error" in result:
+        messaggio = {"esito": "Errore nel processo di registrazione, riprovare più tardi"}
+    else:
+        messaggio = {"esito": "Registrazione avvenuta con successo"}
+
+    cookie = quote(json.dumps(messaggio))
     response = make_response(redirect(url_for("routes.index")))
     response.set_cookie("esito", cookie)
-    if "error" in result:
-        cookie = json.dumps({"esito": "Errore nel processo di registrazione, riprovare più tardi"})
-        response.set_cookie("esito", cookie)
     return response
-
 @bp.route("/inserisci_sacca", methods=["POST"])
 def insertsacca():
-    id = request.form.get("sacca_id")
-    tipo = request.form.get("tipo")
-    quantita = request.form.get("quantita")
-    donatore = request.form.get("donatore")
-    bloodgroup = request.form.get("gruppo_sanguigno")
-    insertdate = request.form.get("data_inserimento")
-    tests = request.form.get("test") #Vanno collegati a dei "documenti", inseriti precedentemente (o successivamente)
-    info = request.form.get("info") #Va fatto in modo che siano opzioni fisse
-
-    if not id or not tipo or not quantita or not donatore or not bloodgroup or not insertdate or not tests or not info:
-        return render_template("Ospedale_dashboard.html", esito="I campi non sono opzionali. Sve")
-
     try:
+        # Prendi i dati dal form
+        id = request.form.get("sacca_id")
+        tipo = request.form.get("tipo")
+        quantita = request.form.get("quantita")
+        donatore = request.form.get("donatore")
+        bloodgroup = request.form.get("gruppo_sanguigno")
+        insertdate = request.form.get("data_inserimento")
+        tests = request.form.get("test")
+        info = request.form.get("info")
+
+        # Controllo campi obbligatori
+        if not all([id, tipo, quantita, donatore, bloodgroup, insertdate, tests, info]):
+            return render_template("Ospedale_dashboard.html", esito="Tutti i campi sono obbligatori.")
+
+        # Recupera dati ospedale dal cookie
         dati_ospedale = request.cookies.get("ospedale_data")
         if not dati_ospedale:
             return render_template("Landing_Page.html", esito="Sessione scaduta, rieffettua il login.")
 
         key = load_or_generate_key()
         dati_ospedale = decrypt_data(dati_ospedale, key)
-        #Prendi le sacche totali
-        query = db.session.execute(text("SELECT SaccheTotali();"))
-        if not query:
-            print("La funzione non funziona, sve.")
-            return render_template("Ospedale_dashboard.html")
-        sacchetot = query.scalar() +1
-        print("Sacche totali globalmente: " + str(sacchetot))
-        #Poi quelle dell'ospedale
-        query = db.session.execute(text("SELECT Sacche FROM Ospedali WHERE id = :id"), {"id": dati_ospedale["id"]}).first()
-        if not query:
-            print("Nessun ospedale trovato con ID:", dati_ospedale["id"])
-            return render_template("Ospedale_dashboard.html", esito="Ospedale non trovato nel database.")
-        saccheosp = query.Sacche +1
-        query = db.session.execute(text("UPDATE Ospedali SET Sacche = :sacche WHERE Id = :id"), {"sacche": saccheosp, "id": dati_ospedale["id"]})
-        db.session.commit()
-        print("Sacche totali in ospedale: " + str(saccheosp))
-        #Se il donatore non è registrato, lo registro e lo certifico
-        if db.session.execute(text("SELECT * FROM Donatori WHERE CF=HashWithSalt(:id)"),{"id": donatore}).first() is None:
-            random_pwd = generate_password()
-            print(random_pwd)
-            query = db.session.execute(text("INSERT INTO Donatori(CF, Pwd) VALUES (:cf, :pwd)"),{"cf": donatore, "pwd": base64.b64encode(random_pwd.encode("utf-8").decode("utf-8"))})
-            db.session.commit()
-            Add_kv(class_name="Donatore", key=donatore, id=donatore, pwd=random_pwd)
-        #Poi quelle del donatore
-        query = db.session.execute(text("SELECT Sacche FROM Donatori WHERE CF=HashWithSalt(:id)"),{"id": donatore}).first()
-        if not query:
-            print("Nessun donatore trovato con CF:", donatore)
-            return render_template("Ospedale_dashboard.html", esito="Donatore non trovato nel database.")
-        sacchedon = query.Sacche +1
-        query = db.session.execute(text("UPDATE Donatori SET Sacche = :sacche WHERE CF = HashWithSalt(:cf)"), {"sacche": saccheosp, "cf": donatore})
-        db.session.commit()
-        print("Sacche totali del donatore: " + str(sacchedon))
-        result3 = Add_kv(
-                        class_name="Sacca", 
-                        key="S" + tipo + "_" + str(dati_ospedale["id"]) + str(saccheosp),
-                        sacca_id=id,
-                        tipo=tipo,
-                        quantita=quantita,
-                        donatore=donatore,
-                        gruppo_sanguigno=bloodgroup,
-                        data_inserimento=insertdate,
-                        fruibile="Si",
-                        luogo=dati_ospedale["id"],
-                        test=tests,
-                        info=info)
-        result2 = Add_kv(class_name="Sacca",
-                        key="S" + tipo + "_" + donatore + str(sacchedon),
-                        sacca_id=id,
-                        tipo=tipo,
-                        quantita=quantita,
-                        donatore=donatore,
-                        gruppo_sanguigno=bloodgroup,
-                        data_inserimento=insertdate,
-                        fruibile="Si",
-                        luogo=dati_ospedale["id"],
-                        test=tests,
-                        info=info)
-        result1 = Add_kv(class_name="Sacca",
-                        key="S" + tipo + "_" + str(sacchetot),
-                        sacca_id=id,
-                        tipo=tipo,
-                        quantita=quantita,
-                        donatore=donatore,
-                        gruppo_sanguigno=bloodgroup,
-                        data_inserimento=insertdate,
-                        fruibile="Si",
-                        luogo=dati_ospedale["id"],
-                        test=tests,
-                        info=info)
-        
-        if "error" in result1:
-            print("Aggiunta sacca generale non andata a termine")
+        id_ospedale = dati_ospedale["id"]
 
-        if "error" in result2:
-            print("Aggiunta sacca donatore non andata a termine")
-            
-        if "error" in result3:
-            print("Aggiunta sacca ospedale non andata a termine")
-        
+        # Aggiorna conteggi sacche
+        sacche_globali = db.session.execute(text("SELECT SaccheTotali();")).scalar() or 0
+        print("Sacche globali totali:", sacche_globali + 1)
+
+        # Aggiorna sacche ospedale
+        row_ospedale = db.session.execute(
+            text("SELECT Sacche FROM Ospedali WHERE id = :id"),
+            {"id": id_ospedale}
+        ).first()
+
+        if not row_ospedale:
+            return render_template("Ospedale_dashboard.html", esito="Ospedale non trovato nel database.")
+
+        nuove_sacche_osp = row_ospedale.Sacche + 1
+        db.session.execute(
+            text("UPDATE Ospedali SET Sacche = :sacche WHERE Id = :id"),
+            {"sacche": nuove_sacche_osp, "id": id_ospedale}
+        )
+        db.session.commit()
+        print("Nuovo totale sacche ospedale:", nuove_sacche_osp)
+
+        # Se il donatore non è registrato
+        query_donatore = db.session.execute(
+            text("SELECT * FROM Donatori WHERE CF = HashWithSalt(:cf)"),
+            {"cf": donatore}
+        ).first()
+
+        if not query_donatore:
+            pwd = generate_password()
+            db.session.execute(
+                text("INSERT INTO Donatori(CF, Pwd) VALUES (:cf, :pwd)"),
+                {"cf": donatore, "pwd": base64.b64encode(pwd.encode("utf-8")).decode("utf-8")}
+            )
+            db.session.commit()
+            Add_kv("Donatore", key=donatore, id=donatore, pwd=pwd)
+
+        # Aggiorna sacche del donatore
+        row_donatore = db.session.execute(
+            text("SELECT Sacche FROM Donatori WHERE CF = HashWithSalt(:cf)"),
+            {"cf": donatore}
+        ).first()
+
+        nuove_sacche_don = row_donatore.Sacche + 1
+        db.session.execute(
+            text("UPDATE Donatori SET Sacche = :sacche WHERE CF = HashWithSalt(:cf)"),
+            {"sacche": nuove_sacche_don, "cf": donatore}
+        )
+        db.session.commit()
+        print("Nuovo totale sacche donatore:", nuove_sacche_don)
+
+        # Chiave univoca comune per tutte le sacche
+        chiave_sacca = random.randint(10**6, 10**9)
+        print(chiave_sacca)
+
+        # Inserisci nei tre registri
+        result_globale = Add_kv(
+            "Sacca",
+            key=chiave_sacca,
+            sacca_id=id,
+            tipo=tipo,
+            quantita=quantita,
+            donatore=donatore,
+            gruppo_sanguigno=bloodgroup,
+            data_inserimento=insertdate,
+            fruibile="Si",
+            luogo=id_ospedale,
+            test=tests,
+            info=info
+        )
+
+        result_ospedale = Add_kv(
+            "Sacca",
+            key=id_ospedale,        #la chiave per saccaOspedale è id_ospedale
+            sacca_id=id,
+            tipo=tipo,
+            quantita=quantita,
+            donatore=donatore,
+            gruppo_sanguigno=bloodgroup,
+            data_inserimento=insertdate,
+            fruibile="Si",
+            luogo=id_ospedale,
+            test=tests,
+            info=info
+        )
+
+        result_donatore = Add_kv(
+            "Sacca",
+            key=donatore,           #la chiave per la saccaDonatore è il suo codicefiscale
+            sacca_id=id,
+            tipo=tipo,
+            quantita=quantita,
+            donatore=donatore,
+            gruppo_sanguigno=bloodgroup,
+            data_inserimento=insertdate,
+            fruibile="Si",
+            luogo=id_ospedale,
+            test=tests,
+            info=info
+        )
+
+        # Log errori eventuali
+        if "error" in result_globale:
+            print("Errore inserimento sacca globale:", result_globale)
+        if "error" in result_ospedale:
+            print("Errore inserimento sacca ospedale:", result_ospedale)
+        if "error" in result_donatore:
+            print("Errore inserimento sacca donatore:", result_donatore)
+
         return render_template("Ospedale_dashboard.html", esito="Sacca registrata con successo!")
+
     except Exception as e:
-        print("Errore di registrazione")
-        return render_template("Ospedale_dashboard.html", esito="errore: " + str(e))
+        print("Eccezione:", e)
+        return render_template("Ospedale_dashboard.html", esito=f"Errore durante l'inserimento: {str(e)}")
 
 #TODO: Trovare un nome file ricostruibile (ai fini di chiave) oppure una chiave ricostruibile
 @bp.route("/caricaDocumentazione", methods=["POST"])
