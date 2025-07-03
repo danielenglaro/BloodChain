@@ -76,21 +76,19 @@
         <label>Codice identificativo:</label>
         <input type="text" name="codice_identificativo">
 
-        <label>Partita IVA / Codice Fiscale:</label>
+        <label>Partita IVA</label>
         <input type="text" name="partita_iva_cf">
 
         <h3>📍 Informazioni sulla sede:</h3>
         <label>Indirizzo completo:</label>
-        <input type="text" name="indirizzo" required>
-
-        <label>Coordinate GPS (opzionale):</label>
-        <input type="text" name="coordinate_gps">
+        <input type="text" name="indirizzo" id="autocomplete" required>
 
         <label>Regione:</label>
         <input type="text" name="regione">
 
         <label>Comune:</label>
         <input type="text" name="comune">
+
 
         <h3>📞 Contatti:</h3>
         <label>Telefono:</label>
@@ -99,11 +97,8 @@
         <label>Email dedicata:</label>
         <input type="email" name="email_dedicata" required>
 
-        <label>Sito web (opzionale):</label>
-        <input type="url" name="sito_web">
-
         <h3>🔒 Credenziali di accesso:</h3>
-        <label>Email per login:</label>
+        <label>Username</label>
         <input type="email" name="email" required>
 
         <label>Password:</label>
@@ -119,6 +114,9 @@
     <p>&copy; 2025 Dona Sangue - Tutti i diritti riservati</p>
     <p>Email: info@donasangue.it | Tel: 800-123-456</p>
   </footer>
+
+  
+
 </body>
 
 <script>
@@ -177,6 +175,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+
+function initAutocomplete() {
+  const input = document.getElementById("autocomplete");
+  const autocomplete = new google.maps.places.Autocomplete(input, {
+    types: ["address"],
+    componentRestrictions: { country: "it" }
+  });
+
+  autocomplete.addListener("place_changed", function () {
+    const place = autocomplete.getPlace();
+
+    // Trova regione e comune dai componenti
+    let regione = "";
+    let comune = "";
+
+    for (const component of place.address_components) {
+      if (component.types.includes("administrative_area_level_1")) {
+        regione = component.long_name;
+      } else if (component.types.includes("locality")) {
+        comune = component.long_name;
+      }
+    }
+
+    // Inserisci nei rispettivi input (se presenti)
+    document.querySelector('input[name="regione"]').value = regione;
+    document.querySelector('input[name="comune"]').value = comune;
+  });
+}
+
 </script>
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhvubzxxIjxcAW8Bg8rImKKbfNdyRnnP4&libraries=places&callback=initAutocomplete"
+  async defer></script>
 
 </html>

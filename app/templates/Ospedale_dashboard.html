@@ -10,25 +10,23 @@
   <header>
     <h1>BloodChain</h1>
     <nav>
-      <a href="/">Home</a>
-      <a href="/dashboardOspedale">Ospedale</a>
-      <a href="/dashboardDonatore">Donatore</a>
+      <a href="/">Logout</a>
     </nav>
     <!-- Esempio di visualizzazione dei dati -->
   </header>
 
-  <main class="dashboard">
+  <main class="dashboard1">
     
 
     <section class="actions" id="azioni">
       <h2>Azioni Rapide</h2>
-      <div class="buttons">
-        <button onclick="openForm('aggiungiSacca')">➕ Aggiungi sacca</button>
-        <button onclick="openForm('richiediSangue')">🩸 Richiedi sangue</button>
-        <button onclick="openForm('aggiornaStato')">🔄 Aggiorna stato</button>
-        <button onclick="openForm('aggiungiEmoteca')">🏥 Aggiungi Emoteca/SPOC</button>
-        <button onclick="openForm('caricaDocumentazione')">📃 Carica Documentazione</button>
-        <button onclick="openForm('reimpostaDonatore')">🧑‍🦰 Reimposta Donatore</button> <!-- Questo -->
+      <div class="buttons_verticali">
+        <button onclick="openForm('aggiungiSacca')">➕ Aggiungi sacca</button> <br>
+        <button onclick="openForm('richiediSangue')">🩸 Richiedi sangue</button> <br>
+        <button onclick="openForm('aggiornaStato')">🔄 Aggiorna stato</button> <br>
+        <button onclick="openForm('aggiungiEmoteca')">🏥 Aggiungi Emoteca/SPOC</button> <br>
+        <button onclick="openForm('caricaDocumentazione')">📃 Carica Documentazione</button> <br>
+        <button onclick="openForm('reimpostaDonatore')">🧑‍🦰 Reimposta Donatore</button> <br> <!-- Questo -->
       </div>
     </section>
     
@@ -73,23 +71,7 @@
     </div>
 
 
-    <!-- Tabella per visualizzare le sacche dell'emoteca -->
-    <section class="tabella-emoteca">
-      <h3>Emoteca/SPOC e Sacche Associate</h3>
-      <table id="emotecaTable">
-        <thead>
-          <tr>
-            <th>Nome Emoteca</th>
-            <th>Latitudine</th>
-            <th>Longitudine</th>
-            <th>Sacche Associate</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- La tabella sarà popolata dinamicamente con le sacche -->
-        </tbody>
-      </table>
-    </section>
+    
 
   <div class="popup" id="aggiungiSacca">
     <div class="popup-content">

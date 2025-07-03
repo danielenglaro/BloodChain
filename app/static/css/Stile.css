@@ -12,6 +12,9 @@ body {
   line-height: 1.6;
   color: #333;
   overflow-x: hidden;
+  height: 100%;
+  width: 100%;
+  text-align: center;
 }
 
 /* Header */
@@ -118,9 +121,14 @@ header nav a:hover {
   top: 20%;
 }
 
+.h2 {
+  text-align: center;
+}
+
 .section h2 {
   color: #003366;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 /* Benefici */
@@ -156,10 +164,10 @@ footer {
   background-color: #222;
   color: #fff;
   text-align: center;
-  padding: 2rem 1rem;
-  margin-top: 4rem;
-}
+  padding: 2rem 1rem; 
+  margin-top: 710px;
 
+}
 /* Dashboard */
 .dashboard {
   padding: 3rem 2rem;
@@ -186,6 +194,16 @@ footer {
 /* Azioni */
 .actions .buttons {
   display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* Azioni */
+.actions .buttons_verticali {
+  display: flex;
+  flex-direction: column;
+  width: 15%;
   gap: 1.5rem;
   justify-content: center;
   margin-top: 2rem;
