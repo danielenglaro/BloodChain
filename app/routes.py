@@ -45,47 +45,18 @@ def start_publish_thread(app):
 
 # Run the background task as soon as the app starts
 #TODO: Modificare la richiesta di trasferimento sacche, dovrebbe far vedere una lista da cui poter scegliere le sacche che si vogliono trasferire.
-#TODO: Una volta arrivati ai trasferimenti, aggiornare il db con il numero di consegne verso un determinato ospedale
 #TODO: Inserire i controlli pe i formati specifici come Codice Fiscale e Partita IVA
-#TODO: Modellare il recupero password
-#TODO: (To be continued...)
-#TODO: Prevenire spam di registrazioni
-#TODO: Fare in modo che il recupero password avvenga veramente per e-mail
 #TODO: Vedere se è possibile integrare le API di Open Street Maps per le coordinate (Brownie points)
-#TODO: (Alla fine del progetto), aprire un indirizzo con un DDNS così possiamo collegarci direttamente da browser senza usare AnyDesk
-#TODO: Modellare registrazione con credenziali già usate, adesso rompe il sito con una exception, dovrebbe mostrare credenziali già in uso.
-#TODO: Ultimare la creazione della targetta facendo modo che la scarica automaticamente dopo la registrazione (e se viene richiesta dall'ospedale)
-def generaTargetta(cf_don, pwd, date):
-    # Label size: 90mm x 30mm
-    buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=(90*mm, 30*mm))
-    
-    # Basic info
-    c.setFont("Helvetica-Bold", 10)
-    c.drawString(10*mm, 25*mm, f"Nome Utente: {cf_don}")
-    c.drawString(10*mm, 20*mm, f"Password: {pwd}")
-    c.setFont("Helvetica", 9)
-    c.drawString(10*mm, 13*mm, f"Data: {date}")
-
-    # Generate QR code
-    qr = qrcode.make(f"ID:{cf_don} - {pwd} - {date}")
-    qr_io = BytesIO()
-    qr.save(qr_io, format='PNG')
-    qr_io.seek(0)
-    
-    # Draw QR on label (top-right)
-    c.drawImage(qr_io, 65*mm, 10*mm, width=20*mm, height=20*mm)
-
-    c.showPage()
-    c.save()
-
-    buffer.seek(0)
-    return buffer
 
 @bp.route("/")
+
 def index():
+
     return render_template("Landing_Page.html")
+
+
 @bp.route("/submitRegistrazioneOspedale", methods=["POST"])
+
 def registrazione_ospedale():
     # Dati form
     nome = request.form.get("nome")
@@ -144,7 +115,10 @@ def registrazione_ospedale():
     response = make_response(redirect(url_for("routes.index")))
     response.set_cookie("esito", cookie)
     return response
+
+
 @bp.route("/inserisci_sacca", methods=["POST"])
+
 def insertsacca():
     try:
         # Prendi i dati dal form
@@ -284,8 +258,9 @@ def insertsacca():
         print("Eccezione:", e)
         return render_template("Ospedale_dashboard.html", esito=f"Errore durante l'inserimento: {str(e)}")
 
-#TODO: Trovare un nome file ricostruibile (ai fini di chiave) oppure una chiave ricostruibile
+
 @bp.route("/caricaDocumentazione", methods=["POST"])
+
 def upload_file():
     if 'document' not in request.files:
         return "No file part in request", 400
@@ -320,6 +295,7 @@ def upload_file():
 
 
 @bp.route("/loginOspedale", methods=["POST"])
+
 def login():
     username = request.form.get("username")
     password = request.form.get("password")
@@ -357,7 +333,9 @@ def login():
         print(f"Errore durante il login: {str(e)}")
         return render_template("Landing_Page.html", esito={"error": f"Errore server: {str(e)}"})
 
+
 @bp.route("/dashboardOspedale", methods=["GET"])
+
 def dashboard_ospedale():
     dati_ospedale = request.cookies.get("ospedale_data")
     if not dati_ospedale:
@@ -373,7 +351,9 @@ def dashboard_ospedale():
         
     return render_template("Ospedale_dashboard.html")
 
+
 @bp.route('/stats', methods=["GET"])
+
 def stats():
     dati_ospedale = request.cookies.get("ospedale_data")
     if not dati_ospedale:
@@ -394,7 +374,9 @@ def stats():
 
     return Response(generate(), content_type='text/event-stream')
 
+
 @bp.route("/loginDonatore", methods=["POST"])
+
 def donatore_login():
     username = request.form.get("username")
     password = request.form.get("password")
@@ -427,7 +409,9 @@ def donatore_login():
         print(f"Errore durante il login: {str(e)}")
         return render_template("Landing_Page.html", esito={"error": f"Errore server: {str(e)}"})
 
+
 @bp.route("/dashboardDonatore", methods=["GET"])
+
 def dashboard_donatore():
     dati_ospedale = request.cookies.get("ospedale_data")
     if not dati_ospedale:
@@ -443,7 +427,9 @@ def dashboard_donatore():
         
     return render_template("Donatore_dashboard.html")
 
+
 @bp.route("/resetDonatore", methods=["POST"])
+
 def donatore_registrazione():
     codice_fiscale = request.form.get("codice_fiscale")
 
@@ -459,3 +445,15 @@ def donatore_registrazione():
     query = db.session.execute(text("UPDATE Donatori SET CF = :cf, Pwd = :pwd WHERE CF = :oldcf AND Pwd = :oldpw"),{"cf": codice_fiscale, "pwd": random_pwd, "oldcf": dati_esistenti["id"], "oldpw": base64.b64decode(dati_esistenti["pwd"].decode("utf-8"))})
     db.session.commit()
     return render_template("Ospedale_dashboard.html", esito="Registrazione Donatore completata con successo! Sve")
+
+
+@bp.route("/raggiroOspedale", methods=["GET"])
+
+def DebugO():
+    return render_template("Ospedale_dashboard.html")
+
+
+@bp.route("/raggiroDonatore", methods=["GET"])
+
+def DebugD():
+    return render_template("Donatore_dashboard.html")

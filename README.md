@@ -26,3 +26,16 @@ BloodChain dal suo sito vuole fornire uno strumento ad ospedali e donatori. I pr
 
 - Rotazione chiave per i cookie 
 - Prendere coordinate open street maps
+
+
+
+
+##Svejate
+
+#Pagina Ospedale
+-Implementare il trasferimento
+-Implementare il cambio di stato (data una chiave di una sacca possiamo renderla non fruibile)
+
+#Pagina Donatore
+-Quando entri viene prima fatta una GetKV, che popola la tabella della dashboard del donatore.
+-Inserire un banner con le notifiche mediche
