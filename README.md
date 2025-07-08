@@ -1,4 +1,4 @@
-# Questo è il repository del progetto BloodChain
+                                                                                                        # Questo è il repository del progetto BloodChain
 BloodChain è un progetto che nasce con l'obiettivo di creare un sistema trasparente e affidabile per la gestione delle donazioni sanguigne. Tutti i dati sono gestiti da una BlockChain permissioned basata su Fabric. \
 BloodChain dal suo sito vuole fornire uno strumento ad ospedali e donatori. I primi hanno la possibilità di gestire la propria emoteca, mentre i donatori possono avere traccia del proprio contributo alla causa delle donazioni.
 

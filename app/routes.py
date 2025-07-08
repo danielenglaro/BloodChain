@@ -252,7 +252,8 @@ def insertsacca():
         if "error" in result_donatore:
             print("Errore inserimento sacca donatore:", result_donatore)
 
-        return render_template("Ospedale_dashboard.html", esito="Sacca registrata con successo!")
+
+        return render_template("Ospedale_dashboard.html", esito="Sacca registrata con successo!", blockchain_result=result_globale)
 
     except Exception as e:
         print("Eccezione:", e)

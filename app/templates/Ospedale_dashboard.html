@@ -224,7 +224,12 @@
     document.body.style.backgroundSize = 'cover';
   </script>
 
-   
+   {% if blockchain_result %}
+  <section style="padding: 20px; background: #e7ffe7; border: 1px solid #6c6;">
+    <h3>Risposta dalla Blockchain:</h3>
+    <pre>{{ blockchain_result | tojson(indent=2) }}</pre>
+  </section>
+{% endif %}
 
 </body>
 </html>
