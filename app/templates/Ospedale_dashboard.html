@@ -175,7 +175,10 @@
           <label>Codice Fiscale:</label>
           <input type="text" name="codice_fiscale" required pattern="^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$">
           <button type="submit">Registrati</button>
-        </form>
+        </form> 
+        <div id="msgRegistrazione" style="display:none; margin-top:20px; font-weight:bold;">
+          Grazie per esserti registrato! Messaggio personalizzato qui.
+        </div>       
       </div>
     </aside>
   </main>
@@ -201,5 +204,8 @@
     document.body.style.background = `url('${sfondi[randomIndex]}') no-repeat center center fixed`;
     document.body.style.backgroundSize = 'cover';
   </script>
+
+   
+
 </body>
 </html>
