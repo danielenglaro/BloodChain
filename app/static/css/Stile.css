@@ -15,6 +15,7 @@ body {
   height: 100%;
   width: 100%;
   text-align: center;
+  margin: 0;
 }
 
 /* Header */
@@ -165,7 +166,7 @@ footer {
   color: #fff;
   text-align: center;
   padding: 2rem 1rem; 
-  margin-top: 710px;
+  margin-top: 10px;
 
 }
 /* Dashboard */

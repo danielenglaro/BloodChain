@@ -25,19 +25,29 @@
       width: 100%;
     }
     .buttons_verticali button {
-      margin: 10px 0;
-      width: 33%;
-      min-width: 120px;
-      max-width: 100%;
-      align-self: center;
-    }
+  margin: 10px 0;
+  width: 80%;
+  min-width: 200px;
+  max-width: 100%;
+  align-self: center;
+  font-size: 1.1em;
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
     .side-panel {
       flex: 1;
       padding: 20px;
       background: #f9f9f9;
       border-left: 2px solid #ccc;
-      height: 100vh;
       overflow-y: auto;
+      display: none;
+    }
+    .side-panel.active {
+      display: block;
     }
     .form-section {
       margin-bottom: 40px;
@@ -189,15 +199,24 @@
 
   <script>
     function showForm(id) {
+      // Mostra il pannello laterale se nascosto
+      const panel = document.querySelector('.side-panel');
+      if (panel) {
+        panel.classList.add('active');
+      }
+  
+      // Nascondi tutte le sezioni dei form
       document.querySelectorAll('.form-section').forEach(section => {
         section.classList.remove('active');
       });
+  
+      // Mostra solo il form selezionato
       const el = document.getElementById(id);
       if (el) {
         el.classList.add('active');
       }
     }
-
+  
     // Sfondi dinamici
     const sfondi = ['sfondo.png', 'sfondo2.png', 'sfondo3.png', 'sfondo4.png'];
     const randomIndex = Math.floor(Math.random() * sfondi.length);
