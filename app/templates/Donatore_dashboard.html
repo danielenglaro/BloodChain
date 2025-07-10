@@ -1,83 +1,50 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Donatore</title>
-  <link rel="stylesheet" href="static/css/Stile.css">
+    <meta charset="UTF-8">
+    <title>Dashboard Donatore</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Stile.css') }}">
 </head>
-<body>
 
-    <header>
-        <h1>BloodChain</h1>
-        <nav>
-          <a href="/">Logout</a>
+  <body>
+      <h1>Benvenuto nella tua dashboard</h1>
 
-        </nav>
-    </header>
-
-  <main class="dashboard">
-
-    <section class="overview">
-      <h2>Le tue Donazioni</h2>
+      {% if sacche %}
+      <h2>Storico donazioni</h2>
       <div class="donations-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Tipo Donazione</th>
-              <th>Centro</th>
-              <th>Volume</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>2024-11-10</td>
-              <td>Sangue intero</td>
-              <td>Ospedale San Luca Galli</td>
-              <td>450ml</td>
-            </tr>
-            <tr>
-              <td>2025-02-20</td>
-              <td>Plasma</td>
-              <td>Centro Colleferro Milano</td>
-              <td>600ml</td>
-            </tr>
-            <!-- Altre righe generate via API -->
+          <table>
+              <thead>
+                  <tr>
+                      <th>ID Sacca</th>
+                      <th>Tipo</th>
+                      <th>Quantità</th>
+                      <th>Gruppo Sanguigno</th>
+                      <th>Data Inserimento</th>
+                      <th>Luogo</th>
+                      <th>Test</th>
+                      <th>Info</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for sacca in sacche %}
+                      <tr>
+                          <td>{{ sacca.data.sacca_id }}</td>
+                          <td>{{ sacca.data.tipo }}</td>
+                          <td>{{ sacca.data.quantita }}</td>
+                          <td>{{ sacca.data.gruppo_sanguigno }}</td>
+                          <td>{{ sacca.data.data_inserimento }}</td>
+                          <td>{{ sacca.data.luogo }}</td>
+                          <td>{{ sacca.data.test }}</td>
+                          <td>{{ sacca.data.info }}</td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+      {% endif %}
           </tbody>
-        </table>
-      </div>
-    </section>
+      </table>
 
-    <section class="notifications">
-      <h2>Notifiche Mediche</h2>
-      <div class="notification-list">
-        <div class="notification warning">
-          ⚠️ Riscontrata leggera anemia nella donazione del 20/02/2025.
-        </div>
-        <div class="notification ok">
-          ✅ Donazione del 10/11/2024 completata con successo.
-        </div>
-      </div>
-    </section>
-
-
-  </main>
-
-  <footer>
-    <p>&copy; 2025 BloodChain. Tutti i diritti riservati.</p>
-  </footer>
-
-  <script>
-    function prenotaDonazione() {
-      alert("Funzione di prenotazione in costruzione...");
-    }
-        
-    const sfondi = ['sfondo.png', 'sfondo2.png', 'sfondo3.png', 'sfondo4.png'];
-    const randomIndex = Math.floor(Math.random() * sfondi.length);
-    document.body.style.background = `url('${sfondi[randomIndex]}') no-repeat center center fixed`;
-    document.body.style.backgroundSize = 'cover';
-  </script>
-
-</body>
+  </div>
+  </body>
 </html>

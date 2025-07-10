@@ -547,3 +547,42 @@ form input, form label {
 body.modal-open {
   overflow: hidden;
 }
+
+.donations-table {
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  max-width: 1000px;
+  overflow-x: auto;
+}
+
+.donations-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.donations-table th {
+  background-color: #003366;
+  color: white;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+}
+
+.donations-table td {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.donations-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.donations-table tbody tr:hover {
+  background-color: #e8f0ff;
+  transition: background-color 0.3s;
+}

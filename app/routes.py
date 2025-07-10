@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for,  make_
 from app.models import Donatore, Ospedale
 from app import db
 from app.utils import hash_with_salt
-from app.api import Add_kv, Get_kv
+from app.api import Add_kv, Get_kv, Get_key_history
 from .crypto_utils import load_or_generate_key, encrypt_data, decrypt_data, generate_password
 from sqlalchemy import text
 from werkzeug.utils import secure_filename
@@ -448,22 +448,36 @@ def donatore_login():
         return render_template("Landing_Page.html", esito={"error": f"Errore server: {str(e)}"})
 
 
-@bp.route("/dashboardDonatore", methods=["GET"])
-
+@bp.route("/dashboard_donatore")
 def dashboard_donatore():
-    dati_ospedale = request.cookies.get("ospedale_data")
-    if not dati_ospedale:
-        return render_template("Landing_Page.html", esito="Sessione scaduta, rieffettua il login.")
+    try:
+        # Recupera cookie donatore
+        dati_donatore = request.cookies.get("donatore_data")
+        if not dati_donatore:
+            return render_template("Landing_Page.html", esito="Sessione scaduta. Effettua nuovamente il login.")
 
-    key = load_or_generate_key()
-    dati_ospedale = decrypt_data(dati_ospedale, key)
-    ospedale_data = Get_kv("DatiOspedale", dati_ospedale["id"])
-    
-    if "error" in ospedale_data:
-        print("Sti furbetti")
-        return render_template("Landing_Page.html", esito={"error": f"Errore blockchain: {ospedale_data['error']}"})
+        # Decripta i dati
+        key = load_or_generate_key()
+        dati_donatore = decrypt_data(dati_donatore, key)
+        id_donatore = dati_donatore.get("id")
+
+        # Ottieni la storia delle sacche donate
+        result = Get_key_history("Sacca", id_donatore)
+
+        if "error" in result:
+            return render_template("Donatore_dashboard.html", sacche=[], errore="Errore nel recupero della cronologia.")
         
-    return render_template("Donatore_dashboard.html")
+        sacche = result
+        print(sacche)
+        # `valori` è una lista di dizionari (una per ogni sacca)
+        print("siamo qui")
+        return render_template("Donatore_dashboard.html", sacche=sacche)
+
+    except Exception as e:
+        print("Eccezione nella dashboard donatore:", e)
+        return render_template("Donatore_dashboard.html", sacche=[], errore="Si è verificato un errore.")
+
+   
 
 
 @bp.route("/resetDonatore", methods=["POST"])

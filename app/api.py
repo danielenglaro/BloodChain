@@ -141,6 +141,7 @@ def Get_kv(class_name, key):
     except Exception as e:
         return {"error": str(e)}
 
+
 def GetNumKeys(class_name):
     url = "http://localhost:55556/api"
 
@@ -159,6 +160,41 @@ def GetNumKeys(class_name):
                 value_json = data["answer"].get("value", "{}")
                 value = json.loads(value_json)
                 return value  # restituisce un dizionario con i dati effettivi
+            return {"error": "Risposta senza campo 'answer' valido"}
+        return {"error": f"Errore API: {response.status_code}"}
+    except Exception as e:
+        return {"error": str(e)}
+    
+def Get_key_history(class_name, key):
+    url = "http://localhost:55556/api"  # Cambia l'URL se necessario
+
+    payload = {
+        "cmd": "GetKeyHistory",
+        "class": class_name,
+        "key": str(key)
+    }
+
+    try:
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("success") and "answer" in data:
+                history = []
+                for entry in data["answer"]:
+                    record = {
+                        "isDelete": entry.get("isDelete"),
+                        "timestamp": entry.get("timestamp"),
+                        "txId": entry.get("txId"),
+                        "data": json.loads(entry.get("data", "{}")).get("value", {})
+                    }
+                    # Decodifica la stringa JSON nel campo 'value'
+                    if isinstance(record["data"], str):
+                        try:
+                            record["data"] = json.loads(record["data"])
+                        except json.JSONDecodeError:
+                            pass
+                    history.append(record)
+                return history
             return {"error": "Risposta senza campo 'answer' valido"}
         return {"error": f"Errore API: {response.status_code}"}
     except Exception as e:
