@@ -238,6 +238,15 @@
   </section>
 {% endif %}
 
+{% if pwd_donatore and cf %}
+  <section style="padding: 20px; background: #e7ffe7; border: 1px solid #6c6; margin-bottom: 20px; border-radius: 8px;">
+    <h3>Password donatore per codice fiscale <strong>{{ cf }}</strong>:</h3>
+    <p style="font-family: monospace; font-size: 1.2em; background: #dff0d8; padding: 10px; border-radius: 4px; user-select: all;">
+      {{ pwd_donatore }}
+    </p>
+  </section>
+{% endif %}
+
 
 
 </body>

@@ -259,13 +259,16 @@ def insertsacca():
 
         messaggio = {
             "esito": "Sacca registrata con successo!",
-            "blockchain_result": result_globale
+            "blockchain_result": result_globale,
+            "cf": donatore
         }
+        print(donatore_pwd)
         if donatore_pwd:
             messaggio["pwd_donatore"] = donatore_pwd
 
         response = make_response(redirect(url_for("routes.dashboard_ospedale")))
         response.set_cookie("esito", quote(json.dumps(messaggio)))
+        print("COOKIE DA INVIARE:", json.dumps(messaggio, indent=2))
         return response
 
 
