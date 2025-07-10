@@ -174,10 +174,10 @@ def insertsacca():
         donatore_pwd = None 
         if not query_donatore:
             pwd = generate_password()
-            donatore_pwd = pwd  # salva la password da mostrare
+            donatore_pwd = base64.b64encode(pwd.encode("utf-8")).decode("utf-8")  # salva la password da mostrare
             db.session.execute(
                 text("INSERT INTO Donatori(CF, Pwd) VALUES (:cf, :pwd)"),
-                {"cf": donatore, "pwd": base64.b64encode(pwd.encode("utf-8")).decode("utf-8")}
+                {"cf": donatore, "pwd": donatore_pwd}
             )
             db.session.commit()
             Add_kv("Donatore", key=donatore, id=donatore, pwd=pwd)
