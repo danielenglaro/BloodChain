@@ -171,8 +171,10 @@ def insertsacca():
             {"cf": donatore}
         ).first()
 
+        donatore_pwd = None 
         if not query_donatore:
             pwd = generate_password()
+            donatore_pwd = pwd  # salva la password da mostrare
             db.session.execute(
                 text("INSERT INTO Donatori(CF, Pwd) VALUES (:cf, :pwd)"),
                 {"cf": donatore, "pwd": base64.b64encode(pwd.encode("utf-8")).decode("utf-8")}
@@ -213,6 +215,8 @@ def insertsacca():
             test=tests,
             info=info
         )
+        print("BLOCKCHAIN RESULT:", result_globale)
+
 
         result_ospedale = Add_kv(
             "Sacca",
@@ -253,11 +257,26 @@ def insertsacca():
             print("Errore inserimento sacca donatore:", result_donatore)
 
 
-        return render_template("Ospedale_dashboard.html", esito="Sacca registrata con successo!", blockchain_result=result_globale)
+        messaggio = {
+            "esito": "Sacca registrata con successo!",
+            "blockchain_result": result_globale
+        }
+        if donatore_pwd:
+            messaggio["pwd_donatore"] = donatore_pwd
+
+        response = make_response(redirect(url_for("routes.dashboard_ospedale")))
+        response.set_cookie("esito", quote(json.dumps(messaggio)))
+        return response
+
 
     except Exception as e:
         print("Eccezione:", e)
-        return render_template("Ospedale_dashboard.html", esito=f"Errore durante l'inserimento: {str(e)}")
+        messaggio = quote(json.dumps({
+            "esito": f"Errore durante l'inserimento: {str(e)}"
+        }))
+        response = make_response(redirect(url_for("routes.dashboard_ospedale")))
+        response.set_cookie("esito", messaggio)
+        return response
 
 
 @bp.route("/caricaDocumentazione", methods=["POST"])
@@ -335,8 +354,9 @@ def login():
         return render_template("Landing_Page.html", esito={"error": f"Errore server: {str(e)}"})
 
 
-@bp.route("/dashboardOspedale", methods=["GET"])
+from urllib.parse import unquote
 
+@bp.route("/dashboardOspedale", methods=["GET"])
 def dashboard_ospedale():
     dati_ospedale = request.cookies.get("ospedale_data")
     if not dati_ospedale:
@@ -347,10 +367,24 @@ def dashboard_ospedale():
     ospedale_data = Get_kv("DatiOspedale", dati_ospedale["id"])
     
     if "error" in ospedale_data:
-        print("Sti furbetti")
         return render_template("Landing_Page.html", esito={"error": f"Errore blockchain: {ospedale_data['error']}"})
-        
-    return render_template("Ospedale_dashboard.html")
+    
+    esito_cookie = request.cookies.get("esito")
+    context = {}
+
+    if esito_cookie:
+        try:
+            decoded_cookie = unquote(esito_cookie)      # <-- Aggiungi questa linea
+            decoded = json.loads(decoded_cookie)        # <-- Poi fai json.loads
+            context.update(decoded)
+        except Exception as e:
+            context["esito"] = f"Errore decodifica messaggio: {str(e)}"
+
+    response = make_response(render_template("Ospedale_dashboard.html", **context))
+    if esito_cookie:
+        response.set_cookie("esito", "", expires=0)
+    return response
+
 
 
 @bp.route('/stats', methods=["GET"])
