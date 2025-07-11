@@ -126,7 +126,7 @@ def Get_kv(class_name, key):
         "class": class_name,
         "key": str(key)
     }
-
+    
     try:
         response = requests.post(url, json=payload)
         if response.status_code == 200:
@@ -157,13 +157,38 @@ def GetNumKeys(class_name):
             data = response.json()
             if data.get("success") and "answer" in data:
                 # Decodifica il campo JSON 'value' annidato come stringa
-                value_json = data["answer"].get("value", "{}")
-                value = json.loads(value_json)
+                value = data["answer"].get("numkeys")
                 return value  # restituisce un dizionario con i dati effettivi
             return {"error": "Risposta senza campo 'answer' valido"}
         return {"error": f"Errore API: {response.status_code}"}
     except Exception as e:
         return {"error": str(e)}
+    
+
+def GetKeys(class_name):
+    url = "http://localhost:55556/api"
+
+    payload = {
+        "cmd": "GetKeys",
+        "class": class_name,
+        "key":""
+    }
+
+    try:
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("success") and "answer" in data:
+                # Decodifica il campo JSON 'value' annidato come stringa
+                raw_keys = data["answer"].get("keys", [])
+                keys = [item[0] for item in raw_keys if item]
+                return keys  # restituisce un dizionario con i dati effettivi
+            return {"error": "Risposta senza campo 'answer' valido"}
+        return {"error": f"Errore API: {response.status_code}"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
     
 def Get_key_history(class_name, key):
     url = "http://localhost:55556/api"  # Cambia l'URL se necessario
@@ -196,6 +221,27 @@ def Get_key_history(class_name, key):
                     history.append(record)
                 return history
             return {"error": "Risposta senza campo 'answer' valido"}
+        return {"error": f"Errore API: {response.status_code}"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def Delete_kv(class_name, key):
+    url = "http://localhost:55556/api"  # Aggiorna l'host se necessario
+
+    payload = {
+        "cmd": "DelKV",
+        "class": class_name,
+        "key": str(key)
+    }
+
+    try:
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("success"):
+                return {"success": True, "message": f"Elemento {key} della classe {class_name} eliminato con successo."}
+            return {"error": "Eliminazione fallita o chiave non trovata"}
         return {"error": f"Errore API: {response.status_code}"}
     except Exception as e:
         return {"error": str(e)}

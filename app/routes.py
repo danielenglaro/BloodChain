@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for,  make_
 from app.models import Donatore, Ospedale
 from app import db
 from app.utils import hash_with_salt
-from app.api import Add_kv, Get_kv, Get_key_history
+from app.api import Add_kv, Get_kv, Get_key_history, GetNumKeys, GetKeys, Delete_kv
 from .crypto_utils import load_or_generate_key, encrypt_data, decrypt_data, generate_password
 from sqlalchemy import text
 from werkzeug.utils import secure_filename
@@ -18,6 +18,7 @@ import redis
 from urllib.parse import quote
 import os
 
+#TODO: Non serve più, ho fatto con le funzioni di fabric.
 def get_next_sacca_id():
     counter_file = "sacca_id_counter.txt"
 
@@ -40,29 +41,31 @@ bp = Blueprint('routes', __name__)
 ALLOWED_EXTENSIONS = {'pdf'}
 
 # Redis client
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
-#Le statistiche saranno fetchate da delle funzioni in mysql
-def publish_stats(app):
-    with app.app_context():
-        while True:
-            query = db.session.execute(text("SELECT * FROM stat_osp;"))
-            for result in query:
-                stats = {
-                    "num_sacche": result.Sacche,
-                    "tot_sacche": result.SaccheTot
-                }
-                redis_client.set("stats:" + str(result.Id), json.dumps(stats))
-            time.sleep(5)  # Publish stats every 5 seconds
+#redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+#Le statistiche saranno fetchate da delle funzioni interne che lavoreranno sulla blockchain (WIP)
+#def publish_stats(app):
+#    with app.app_context():
+#        while True:
+#            query = db.session.execute(text("SELECT * FROM stat_osp;"))
+#            for result in query:
+#                stats = {
+#                    "num_sacche": result.Sacche,
+#                    "tot_sacche": result.SaccheTot
+#                }
+#                redis_client.set("stats:" + str(result.Id), json.dumps(stats))
+#            time.sleep(5)  # Publish stats every 5 seconds
 
 
 # Start a background thread to simulate stats updates
-def start_publish_thread(app):
-    thread = Thread(target=publish_stats, args=(app,))
-    thread.daemon = True
-    thread.start()
+#def start_publish_thread(app):
+#    thread = Thread(target=publish_stats, args=(app,))
+#    thread.daemon = True
+#    thread.start()
 
 # Run the background task as soon as the app starts
 #TODO: Modificare la richiesta di trasferimento sacche, dovrebbe far vedere una lista da cui poter scegliere le sacche che si vogliono trasferire.
+#TODO: Ho lasciato dei TODO in giro, dateci un'occhiata.
+#TODO: Finire di rimodificare il database, che avevo fatto una porcata con il numero delle sacche. Se per domani non è fatto ci penso io quando ho accesso al pc -Luca
 #TODO: Inserire i controlli pe i formati specifici come Codice Fiscale e Partita IVA
 #TODO: Vedere se è possibile integrare le API di Open Street Maps per le coordinate (Brownie points)
 
@@ -163,26 +166,14 @@ def insertsacca():
         id_ospedale = dati_ospedale["id"]
         luogo = dati_ospedale["nome"]
 
-        # Aggiorna conteggi sacche
-        sacche_globali = db.session.execute(text("SELECT SaccheTotali();")).scalar() or 0
-        print("Sacche globali totali:", sacche_globali + 1)
-
         # Aggiorna sacche ospedale
         row_ospedale = db.session.execute(
-            text("SELECT Sacche FROM Ospedali WHERE id = :id"),
+            text("SELECT * FROM Ospedali WHERE id = :id"),
             {"id": id_ospedale}
         ).first()
 
         if not row_ospedale:
             return render_template("Ospedale_dashboard.html", esito="Ospedale non trovato nel database.")
-
-        nuove_sacche_osp = row_ospedale.Sacche + 1
-        db.session.execute(
-            text("UPDATE Ospedali SET Sacche = :sacche WHERE Id = :id"),
-            {"sacche": nuove_sacche_osp, "id": id_ospedale}
-        )
-        db.session.commit()
-        print("Nuovo totale sacche ospedale:", nuove_sacche_osp)
 
         # Se il donatore non è registrato
         query_donatore = db.session.execute(
@@ -201,28 +192,14 @@ def insertsacca():
             db.session.commit()
             Add_kv("Donatore", key=donatore, id=donatore, pwd=pwd)
 
-        # Aggiorna sacche del donatore
-        row_donatore = db.session.execute(
-            text("SELECT Sacche FROM Donatori WHERE CF = HashWithSalt(:cf)"),
-            {"cf": donatore}
-        ).first()
-
-        nuove_sacche_don = row_donatore.Sacche + 1
-        db.session.execute(
-            text("UPDATE Donatori SET Sacche = :sacche WHERE CF = HashWithSalt(:cf)"),
-            {"sacche": nuove_sacche_don, "cf": donatore}
-        )
-        db.session.commit()
-        print("Nuovo totale sacche donatore:", nuove_sacche_don)
-
         # Chiave univoca comune per tutte le sacche
-        chiave_sacca = random.randint(10**6, 10**9)
+        chiave_sacca = GetNumKeys("Sacca") + 1;
         print(chiave_sacca)
 
         # Inserisci nei tre registri
-        result_globale = Add_kv(
+        result = Add_kv(
             "Sacca",
-            key=chiave_sacca,
+            key=str(id_ospedale) + "_" + donatore + "_" + str(chiave_sacca),
             sacca_id=id,
             tipo=tipo,
             quantita=quantita,
@@ -234,51 +211,15 @@ def insertsacca():
             test=tests,
             info=info
         )
-        print("BLOCKCHAIN RESULT:", result_globale)
-
-
-        result_ospedale = Add_kv(
-            "Sacca",
-            key=id_ospedale,        #la chiave per saccaOspedale è id_ospedale
-            sacca_id=id,
-            tipo=tipo,
-            quantita=quantita,
-            donatore=donatore,
-            gruppo_sanguigno=bloodgroup,
-            data_inserimento=insertdate,
-            fruibile="Si",
-            luogo=luogo,
-            test=tests,
-            info=info
-        )
-
-        result_donatore = Add_kv(
-            "Sacca",
-            key=donatore,           #la chiave per la saccaDonatore è il suo codicefiscale
-            sacca_id=id,
-            tipo=tipo,
-            quantita=quantita,
-            donatore=donatore,
-            gruppo_sanguigno=bloodgroup,
-            data_inserimento=insertdate,
-            fruibile="Si",
-            luogo=luogo,
-            test=tests,
-            info=info
-        )
+        print("BLOCKCHAIN RESULT:", result)
 
         # Log errori eventuali
-        if "error" in result_globale:
-            print("Errore inserimento sacca globale:", result_globale)
-        if "error" in result_ospedale:
-            print("Errore inserimento sacca ospedale:", result_ospedale)
-        if "error" in result_donatore:
-            print("Errore inserimento sacca donatore:", result_donatore)
-
+        if "error" in result:
+            print("Errore inserimento sacca:", result)
 
         messaggio = {
             "esito": "Sacca registrata con successo!",
-            "blockchain_result": result_globale,
+            "blockchain_result": result,
             "cf": donatore
         }
         print(donatore_pwd)
@@ -410,27 +351,27 @@ def dashboard_ospedale():
 
 
 
-@bp.route('/stats', methods=["GET"])
+#@bp.route('/stats', methods=["GET"])
 
-def stats():
-    dati_ospedale = request.cookies.get("ospedale_data")
-    if not dati_ospedale:
-        return render_template("Landing_Page.html", esito="Sessione scaduta, rieffettua il login.")
-
-    key = load_or_generate_key()
-    dati_ospedale = decrypt_data(dati_ospedale, key)
-    def generate():
-        while True:
-            stat_value = redis_client.get("stats:"+str(dati_ospedale["id"]))
-            if stat_value:
-                yield f"data: {stat_value.decode()}\n\n"
-            else:
-               yield f"data: no_change_or_default\n\n"
-
-            
-            time.sleep(1)
-
-    return Response(generate(), content_type='text/event-stream')
+#def stats():
+#    dati_ospedale = request.cookies.get("ospedale_data")
+#    if not dati_ospedale:
+#        return render_template("Landing_Page.html", esito="Sessione scaduta, rieffettua il login.")
+#
+#    key = load_or_generate_key()
+#    dati_ospedale = decrypt_data(dati_ospedale, key)
+#    def generate():
+#        while True:
+#            stat_value = redis_client.get("stats:"+str(dati_ospedale["id"]))
+#            if stat_value:
+#                yield f"data: {stat_value.decode()}\n\n"
+#            else:
+#               yield f"data: no_change_or_default\n\n"
+#
+#           
+#            time.sleep(1)
+#
+#    return Response(generate(), content_type='text/event-stream')
 
 
 @bp.route("/loginDonatore", methods=["POST"])
@@ -482,8 +423,9 @@ def dashboard_donatore():
         id_donatore = dati_donatore.get("id")
 
         # Ottieni la storia delle sacche donate
-        result = Get_key_history("Sacca", id_donatore)
-
+        #TODO: Già per come avevate modificato con il numero randomico non funzionava. Ho modificato per fare con la blockchain, vedete se funziona (visto che è più facile comunicare così che per telefono.)
+        flat_keys = GetKeys("Sacca")
+        result = [Get_kv(k) for k in flat_keys if id_donatore in k] #Su ogni chiave che contiene l'id donatore effettuo una Get_KV e la salvo in una lista.
         if "error" in result:
             return render_template("Donatore_dashboard.html", sacche=[], errore="Errore nel recupero della cronologia.")
         
@@ -529,3 +471,56 @@ def DebugO():
 
 def DebugD():
     return render_template("Donatore_dashboard.html")
+
+
+@bp.route("/inviaSacca", methods=["POST"])
+def transito():
+    # Dati dal form
+    sacca_id = request.form.get("sacca")
+    ospedale_destinazione = request.form.get("ospedale_destinazione")
+    print(sacca_id, ospedale_destinazione)
+
+    # Recupera la sacca (transazione 1)
+    sacca = Get_kv("Sacca", sacca_id)
+    print(sacca)
+    if "error" in sacca:
+        return render_template("Ospedale_dashboard.html", esitosve="❌ Errore nel recupero della sacca.")
+    
+
+    # Modifica il campo "luogo"
+    sacca["luogo"] = ospedale_destinazione
+
+    # Aggiorna la sacca (transazione 1 aggiornata)
+    esito_aggiornamento = Add_kv("Sacca", sacca_id,
+        sacca_id=sacca["sacca_id"],
+        tipo=sacca["tipo"],
+        quantita=sacca["quantita"],
+        donatore=sacca["donatore"],
+        gruppo_sanguigno=sacca["gruppo_sanguigno"],
+        data_inserimento=sacca["data_inserimento"],
+        fruibile=sacca["fruibile"],
+        luogo=sacca["luogo"],
+        test=sacca.get("test", []),
+        info=sacca.get("info", [])
+    )
+    if "error" in esito_aggiornamento:
+        return render_template("Ospedale_dashboard.html", esitosve="❌ Errore nell'aggiornamento della sacca.")
+
+    # Recupera dati ospedale mittente
+    dati_ospedale = request.cookies.get("ospedale_data")
+    if not dati_ospedale:
+        return render_template("Landing_Page.html", esitosve="Sessione scaduta, rieffettua il login.")
+
+    key = load_or_generate_key()
+    dati_ospedale = decrypt_data(dati_ospedale, key)
+    id_ospedale = dati_ospedale["id"]
+
+    # Elimina la sacca dall'ospedale mittente (transazione 2)
+    delete_result = Delete_kv("DatiOspedale", sacca_id)
+    if "error" in delete_result:
+        return render_template("Ospedale_dashboard.html", esitosve="⚠️ Sacca modificata, ma non rimossa dalla tua emoteca.")
+
+    # Tutto OK, rimaniamo sulla dashboard con messaggio
+    return render_template("Ospedale_dashboard.html", esitosve="✅ Sacca inviata correttamente all'ospedale di destinazione.")
+
+  

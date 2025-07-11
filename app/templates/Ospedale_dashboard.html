@@ -118,15 +118,13 @@
       </div>
 
       <div class="form-section" id="richiediSangue">
-        <h3>Richiedi transito di sangue</h3>
-        <form method="POST" action="/richiedi_transito">
-          <label>Da (Ospedale mittente):</label>
-          <input type="text" name="da" required>
-          <label>A (Ospedale destinatario):</label>
-          <input type="text" name="a" required>
-          <label>ID Sacche (separate da virgola):</label>
-          <input type="text" name="carico" required>
-          <button type="submit">Avvia transito</button>
+        <h3>Manda Sacca</h3>
+        <form method="POST" action="/inviaSacca">
+          <label>Emoteca/Ospedale a cui mandare</label>
+          <input type="text" name="ospedale_destinazione" required>
+          <label>Id sacca</label>
+          <input type="text" name="sacca" required>
+          <button type="submit">Manda</button>
         </form>
       </div>
 
@@ -245,6 +243,13 @@
   </section>
 {% endif %}
 
+{% if esito %}
+  <p>{{ esito }}</p>
+{% endif %}
+
+{% if esitosve %}
+    <div class="alert alert-info">{{ esitosve }}</div>
+{% endif %}
 
 
 </body>
