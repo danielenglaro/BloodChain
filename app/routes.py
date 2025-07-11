@@ -161,6 +161,7 @@ def insertsacca():
         key = load_or_generate_key()
         dati_ospedale = decrypt_data(dati_ospedale, key)
         id_ospedale = dati_ospedale["id"]
+        luogo = dati_ospedale["nome"]
 
         # Aggiorna conteggi sacche
         sacche_globali = db.session.execute(text("SELECT SaccheTotali();")).scalar() or 0
@@ -229,7 +230,7 @@ def insertsacca():
             gruppo_sanguigno=bloodgroup,
             data_inserimento=insertdate,
             fruibile="Si",
-            luogo=id_ospedale,
+            luogo=luogo,
             test=tests,
             info=info
         )
@@ -246,7 +247,7 @@ def insertsacca():
             gruppo_sanguigno=bloodgroup,
             data_inserimento=insertdate,
             fruibile="Si",
-            luogo=id_ospedale,
+            luogo=luogo,
             test=tests,
             info=info
         )
@@ -261,7 +262,7 @@ def insertsacca():
             gruppo_sanguigno=bloodgroup,
             data_inserimento=insertdate,
             fruibile="Si",
-            luogo=id_ospedale,
+            luogo=luogo,
             test=tests,
             info=info
         )
@@ -287,6 +288,7 @@ def insertsacca():
         response = make_response(redirect(url_for("routes.dashboard_ospedale")))
         response.set_cookie("esito", quote(json.dumps(messaggio)))
         print("COOKIE DA INVIARE:", json.dumps(messaggio, indent=2))
+        print("cookie", dati_ospedale)
         return response
 
 
