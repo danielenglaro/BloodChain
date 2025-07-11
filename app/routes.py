@@ -16,7 +16,25 @@ import base64
 import time
 import redis
 from urllib.parse import quote
+import os
 
+def get_next_sacca_id():
+    counter_file = "sacca_id_counter.txt"
+
+    # Se il file non esiste, crealo e parti da 1
+    if not os.path.exists(counter_file):
+        with open(counter_file, "w") as f:
+            f.write("1")
+            return 1
+
+    # Leggi il valore attuale
+    with open(counter_file, "r+") as f:
+        current = int(f.read())
+        new = current + 1
+        f.seek(0)
+        f.write(str(new))
+        f.truncate()
+        return new
 
 bp = Blueprint('routes', __name__)
 ALLOWED_EXTENSIONS = {'pdf'}
@@ -122,7 +140,7 @@ def registrazione_ospedale():
 def insertsacca():
     try:
         # Prendi i dati dal form
-        id = request.form.get("sacca_id")
+        id = get_next_sacca_id()
         tipo = request.form.get("tipo")
         quantita = request.form.get("quantita")
         donatore = request.form.get("donatore")
