@@ -80,10 +80,7 @@
       <div class="buttons_verticali">
         <button onclick="showForm('aggiungiSacca')">➕ Aggiungi sacca</button> <br>
         <button onclick="showForm('richiediSangue')">🩸 Richiedi sangue</button> <br>
-        <button onclick="showForm('aggiornaStato')">🔄 Aggiorna stato</button> <br>
-        <button onclick="showForm('aggiungiEmoteca')">🏥 Aggiungi Emoteca/SPOC</button> <br>
-        <button onclick="showForm('caricaDocumentazione')">📃 Carica Documentazione</button> <br>
-        
+        <button onclick="caricaEmoteca()">🏥 Visualizza Emoteca/SPOC</button><br>
       </div>
     </section>
 
@@ -117,63 +114,94 @@
         </form>
       </div>
 
-      <div class="form-section" id="richiediSangue">
-        <h3>Manda Sacca</h3>
-        <form method="POST" action="/inviaSacca">
-          <label>Emoteca/Ospedale a cui mandare</label>
-          <input type="text" name="ospedale_destinazione" required>
-          <label>Id sacca</label>
-          <input type="text" name="sacca" required>
-          <button type="submit">Manda</button>
-        </form>
-      </div>
+    <div class="form-section" id="richiediSangue">
+        
 
-      <div class="form-section" id="aggiornaStato">
-        <h3>Aggiorna stato sacca</h3>
-        <form method="POST" action="/aggiorna_stato">
-          <label for="chiaveSacca">Chiave della sacca:</label>
-          <input type="text" id="chiaveSacca" name="chiave_sacca" required>
+      <h3>Richiesta Sacca</h3>
+      <form method="POST" action="/richiediSacca">
+        <label>Gruppo Sanguigno:</label>
+        <select name="gruppo_sanguigno" required>
+          <option>0+</option><option>0-</option><option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
+        </select>
+        <button type="submit">Richiedi</button>
+      </form>
 
-          <label for="stato">Nuovo stato:</label>
-          <select id="stato" name="stato" required>
-            <option value="">-- Seleziona --</option>
-            <option value="fruibile">Fruibile</option>
-            <option value="non_fruibile">Non fruibile</option>
-          </select>
+      {% if sacche_richieste %}
+      <h4>Risultati:</h4>
+      <table border="1" cellpadding="5">
+        <tr>
+          <th>Tipo</th>
+          <th>Quantità (ml)</th>
+          <th>Gruppo</th>
+          <th>Data Inserimento</th>
+          <th>Luogo</th>
+          <th>Test</th>
+          <th>Info</th>
+        </tr>
+        {% for sacca in sacche_richieste %}
+        <tr>
+          <td>{{ sacca.tipo }}</td>
+          <td>{{ sacca.quantita }}</td>
+          <td>{{ sacca.gruppo_sanguigno }}</td>
+          <td>{{ sacca.data_inserimento }}</td>
+          <td>{{ sacca.luogo }}</td>
+          <td>{{ sacca.test }}</td>
+          <td>{{ sacca.info }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endif %}
 
-          <button type="submit">Invia</button>
-        </form>
-      </div>
+      {% if msg %}
+        <p>{{ msg }}</p>
+      {% endif %}
+
+    </div>
+
       
-      <div class="form-section" id="aggiungiEmoteca">
-        <h3>Aggiungi Emoteca/SPOC</h3>
-        <form method="POST" action="/aggiungi_emoteca">
-          <label>Nome emoteca:</label>
-          <input type="text" name="nome" required>
-          <label>Latitudine:</label>
-          <input type="text" name="latitudine" required>
-          <label>Longitudine:</label>
-          <input type="text" name="longitudine" required>
-          <label>ID sacche associate:</label>
-          <input type="text" name="sacche">
-          <button type="submit">Crea Emoteca</button>
+     <div class="form-section" id="aggiungiEmoteca">
+  <h3>Emoteca del tuo ospedale</h3>
+  {% if sacche_emoteca %}
+    <table class="tabella-emoteca">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Tipo</th>
+      <th>Quantità (ml)</th>
+      <th>Gruppo Sanguigno</th>
+      <th>Codice Fiscale</th>
+      <th>Data Inserimento</th>
+      <th></th>
+    </tr>
+  </thead>
+ <tbody>
+  {% for sacca in sacche_emoteca %}
+    <tr>
+      <td>{{ sacca.data.sacca_id }}</td>
+      <td>{{ sacca.data.tipo }}</td>
+      <td>{{ sacca.data.quantita }}</td>
+      <td>{{ sacca.data.gruppo_sanguigno }}</td>
+      <td>{{ sacca.data.donatore }}</td>
+      <td>{{ sacca.data.data_inserimento }}</td>
+      <td>
+        <form method="POST" action="/aggiorna_stato" onsubmit="return confermaEliminazione();">
+          <input type="hidden" name="chiave_sacca" value="{{ sacca.data.sacca_id }}">
+          <button type="submit" style="background-color: #d9534f; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">
+            🗑️ Aggiorna
+          </button>
         </form>
-      </div>
+      </td>
+    </tr>
+  {% endfor %}
+</tbody>
 
-      <div class="form-section" id="caricaDocumentazione">
-        <h3>Carica Documentazione</h3>
-        <form method="POST" enctype="multipart/form-data" action="/caricaDocumentazione">
-          <label>Esito:</label>
-          <select name="esito" required>
-            <option>Positivo</option>
-            <option>Negativo</option>
-          </select>
-          <label>Documento:</label>
-          <input type="file" name="document" required>
-          <label><small>Nome file: CodiceFiscale-Data-NomeTest.pdf</small></label>
-          <button type="submit">Carica</button>
-        </form>
-      </div>
+</table>
+
+  {% else %}
+    <p>Nessuna sacca disponibile o errore nel caricamento.</p>
+  {% endif %}
+</div>
 
       <div class="form-section" id="reimpostaDonatore">
         <h3>Registrazione Donatore</h3>
@@ -194,31 +222,51 @@
   </footer>
 
   <script>
-    function showForm(id) {
-      // Mostra il pannello laterale se nascosto
-      const panel = document.querySelector('.side-panel');
-      if (panel) {
-        panel.classList.add('active');
-      }
-  
-      // Nascondi tutte le sezioni dei form
-      document.querySelectorAll('.form-section').forEach(section => {
-        section.classList.remove('active');
-      });
-  
-      // Mostra solo il form selezionato
-      const el = document.getElementById(id);
-      if (el) {
-        el.classList.add('active');
-      }
+  function showForm(id) {
+    const panel = document.querySelector('.side-panel');
+    if (panel) {
+      panel.classList.add('active');
     }
-  
-    // Sfondi dinamici
-    const sfondi = ['sfondo.png', 'sfondo2.png', 'sfondo3.png', 'sfondo4.png'];
-    const randomIndex = Math.floor(Math.random() * sfondi.length);
-    document.body.style.background = `url('${sfondi[randomIndex]}') no-repeat center center fixed`;
-    document.body.style.backgroundSize = 'cover';
-  </script>
+
+    document.querySelectorAll('.form-section').forEach(section => {
+      section.classList.remove('active');
+    });
+
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('active');
+    }
+  }
+
+  function caricaEmoteca() {
+    fetch('/visualizzaEmoteca')
+      .then(response => response.text())
+      .then(html => {
+        // Crea un elemento temporaneo per estrarre il contenuto
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+
+        // Cerca il blocco con id aggiungiEmoteca
+        const nuovaEmoteca = temp.querySelector('#aggiungiEmoteca');
+
+        if (nuovaEmoteca) {
+          document.getElementById('aggiungiEmoteca').innerHTML = nuovaEmoteca.innerHTML;
+        }
+
+        // Mostra il form come per gli altri bottoni
+        showForm('aggiungiEmoteca');
+      })
+      .catch(error => {
+        console.error('Errore nel caricamento della emoteca:', error);
+        alert('Errore nel caricamento della emoteca.');
+      });
+  }
+
+  function confermaEliminazione() {
+  return confirm("Segnala come non fruibile ed elimina?");
+}
+
+</script>
 
 {% if esito %}
   <section style="padding: 20px; background: #e7ffe7; border: 1px solid #6c6; margin-bottom: 20px;">

@@ -18,25 +18,6 @@ import redis
 from urllib.parse import quote
 import os
 
-#TODO: Non serve più, ho fatto con le funzioni di fabric.
-def get_next_sacca_id():
-    counter_file = "sacca_id_counter.txt"
-
-    # Se il file non esiste, crealo e parti da 1
-    if not os.path.exists(counter_file):
-        with open(counter_file, "w") as f:
-            f.write("1")
-            return 1
-
-    # Leggi il valore attuale
-    with open(counter_file, "r+") as f:
-        current = int(f.read())
-        new = current + 1
-        f.seek(0)
-        f.write(str(new))
-        f.truncate()
-        return new
-
 bp = Blueprint('routes', __name__)
 ALLOWED_EXTENSIONS = {'pdf'}
 
@@ -143,7 +124,7 @@ def registrazione_ospedale():
 def insertsacca():
     try:
         # Prendi i dati dal form
-        id = get_next_sacca_id()
+        
         tipo = request.form.get("tipo")
         quantita = request.form.get("quantita")
         donatore = request.form.get("donatore")
@@ -196,11 +177,11 @@ def insertsacca():
         chiave_sacca = GetNumKeys("Sacca") + 1;
         print(chiave_sacca)
 
-        # Inserisci nei tre registri
+        # Inserisci la sacca
         result = Add_kv(
-            "Sacca",
+            class_name="Sacca",
             key=str(id_ospedale) + "_" + donatore + "_" + str(chiave_sacca),
-            sacca_id=id,
+            sacca_id=chiave_sacca,
             tipo=tipo,
             quantita=quantita,
             donatore=donatore,
@@ -241,41 +222,6 @@ def insertsacca():
         response = make_response(redirect(url_for("routes.dashboard_ospedale")))
         response.set_cookie("esito", messaggio)
         return response
-
-
-@bp.route("/caricaDocumentazione", methods=["POST"])
-
-def upload_file():
-    if 'document' not in request.files:
-        return "No file part in request", 400
-
-    file = request.files['document']
-    esito = request.form.get("esito")
-    
-    if file.filename == '':
-        return "No file selected", 400
-
-    if file:
-        filename = secure_filename(file.filename)
-        # Read binary content
-        file_content = file.read()
-        # Encode in base64 for safe storage
-        encoded_content = base64.b64encode(file_content).decode('utf-8')
-        
-        # Store in blockchain
-        result = Add_kv(
-            class_name="Test",
-            key=filename,
-            content=encoded_content,
-            filename=filename,
-            content_type=file.content_type,
-            esito=esito
-        )
-
-        if "error" in result:
-            return f"Error storing document: {result['error']}", 500
-
-        return f"Document {filename} stored successfully.", 200
 
 
 @bp.route("/loginOspedale", methods=["POST"])
@@ -425,14 +371,19 @@ def dashboard_donatore():
         # Ottieni la storia delle sacche donate
         #TODO: Già per come avevate modificato con il numero randomico non funzionava. Ho modificato per fare con la blockchain, vedete se funziona (visto che è più facile comunicare così che per telefono.)
         flat_keys = GetKeys("Sacca")
-        result = [Get_kv(k) for k in flat_keys if id_donatore in k] #Su ogni chiave che contiene l'id donatore effettuo una Get_KV e la salvo in una lista.
+        
+        result = [Get_key_history("Sacca", k) for k in flat_keys if id_donatore in k] #Su ogni chiave che contiene l'id donatore effettuo una Get_KV e la salvo in una lista.
+        print(flat_keys)
+        print(Get_key_history("Sacca", flat_keys[0]))
+        print(result)
         if "error" in result:
             return render_template("Donatore_dashboard.html", sacche=[], errore="Errore nel recupero della cronologia.")
+        sacche = []
         
-        sacche = result
-        print(sacche)
+        for i in range(len(result)): 
+            sacche.append(result[i][0])
+        print("-----------------\n\n\n-Qui iniziano le sacche:",sacche)
         # `valori` è una lista di dizionari (una per ogni sacca)
-        print("siamo qui")
         return render_template("Donatore_dashboard.html", sacche=sacche)
 
     except Exception as e:
@@ -524,3 +475,131 @@ def transito():
     return render_template("Ospedale_dashboard.html", esitosve="✅ Sacca inviata correttamente all'ospedale di destinazione.")
 
   
+@bp.route("/visualizzaEmoteca")
+def visualizza_emoteca():
+    try:
+        dati_ospedale = request.cookies.get("ospedale_data")
+        if not dati_ospedale:
+            msg = quote(json.dumps({"esito": "Sessione scaduta. Effettua nuovamente il login."}))
+            response = make_response(redirect(url_for("routes.dashboard_ospedale")))
+            response.set_cookie("esito", msg)
+            return response
+
+        key = load_or_generate_key()
+        dati_ospedale = decrypt_data(dati_ospedale, key)
+        id_ospedale = dati_ospedale.get("id")
+
+        flat_keys = GetKeys("Sacca")
+        chiavi_mie_sacche = [k for k in flat_keys if k.startswith(f"{id_ospedale}_")]
+        result = [Get_key_history("Sacca", k) for k in chiavi_mie_sacche]
+
+        if any("error" in r for r in result if isinstance(r, dict)):
+            msg = quote(json.dumps({"errore": "Errore nel recupero della cronologia sacche."}))
+            response = make_response(redirect(url_for("routes.dashboard_ospedale")))
+            response.set_cookie("esito", msg)
+            return response
+
+        sacche = [r[0] for r in result if isinstance(r, list) and len(r) > 0]
+       
+
+        msg = quote(json.dumps({"sacche_emoteca": sacche}))
+        response = make_response(redirect(url_for("routes.dashboard_ospedale")))
+        response.set_cookie("esito", msg)
+        return response
+
+    except Exception as e:
+        print("Errore:", e)
+        msg = quote(json.dumps({"errore": "Errore imprevisto durante la visualizzazione dell’emoteca."}))
+        response = make_response(redirect(url_for("routes.dashboard_ospedale")))
+        response.set_cookie("esito", msg)
+        return response
+
+@bp.route("/aggiorna_stato", methods=["POST"])
+def aggiorna_stato():
+    print("sono qui")
+    chiave_sacca = request.form.get("chiave_sacca")
+
+    if not chiave_sacca:
+        msg = quote(json.dumps({"esitosve": "Chiave sacca mancante."}))
+        response = make_response(redirect(url_for("routes.dashboard_ospedale")))
+        response.set_cookie("esito", msg)
+        return response
+
+    try:
+        # prendi tutte le chiavi
+        flat_keys = GetKeys("Sacca")
+        # filtra quelle che terminano con chiave_sacca
+        #TODO: fixare per fare chiave esatta
+        chiavi_da_eliminare = [k for k in flat_keys if k.endswith(f"_{chiave_sacca}")]
+        print(f"Chiavi da eliminare: {chiavi_da_eliminare}")
+
+        if not chiavi_da_eliminare:
+            msg = quote(json.dumps({"esitosve": f"Nessuna sacca trovata con chiave finale {chiave_sacca}."}))
+        else:
+            # elimina tutte le chiavi trovate
+            for key in chiavi_da_eliminare:
+                delete_result = Delete_kv("Sacca", key)
+                print(f"Eliminazione {key}: {delete_result}")
+
+            msg = quote(json.dumps({"esitosve": f"Sacca/e con chiave finale {chiave_sacca} eliminata/e con successo."}))
+
+        response = make_response(redirect(url_for("routes.dashboard_ospedale")))
+        response.set_cookie("esito", msg)
+        return response
+
+    except Exception as e:
+        print("Errore durante l'eliminazione della sacca:", e)
+        msg = quote(json.dumps({"esitosve": f"Errore imprevisto: {str(e)}"}))
+        response = make_response(redirect(url_for("routes.dashboard_ospedale")))
+        response.set_cookie("esito", msg)
+        return response
+
+
+@bp.route("/richiediSacca", methods=["POST"])
+def richiedi_sacca():
+    gruppo_richiesto = request.form.get("gruppo_sanguigno")
+    dati_ospedale = request.cookies.get("ospedale_data")
+    if not dati_ospedale:
+        return render_template("Landing_Page.html", esito="Sessione scaduta, rieffettua il login.")
+
+    key = load_or_generate_key()
+    dati_ospedale = decrypt_data(dati_ospedale, key)
+    id_ospedale = dati_ospedale["id"]
+
+    if not gruppo_richiesto:
+        msg = "Gruppo sanguigno mancante."
+        return render_template("dashboard_ospedale.html", msg=msg, sacche_richieste=[])
+
+    try:
+        keys = GetKeys("Sacca")
+        sacche_filtrate = []
+
+        if isinstance(keys, list):
+            for key in keys:
+                sacca = Get_kv("Sacca", key)
+                if isinstance(sacca, dict) and sacca.get("gruppo_sanguigno") == gruppo_richiesto:
+                    sacche_filtrate.append(sacca)
+
+        if not sacche_filtrate:
+            msg = f"Nessuna sacca trovata per il gruppo {gruppo_richiesto}."
+        else:
+            msg = f"Trovate {len(sacche_filtrate)} sacche per il gruppo {gruppo_richiesto}."
+
+        
+        result = Add_kv(
+            class_name="Transito", 
+            key=str(id_ospedale) + "_" + str(GetNumKeys("Trasferimento")+1),
+            richiedente=id_ospedale,
+            filtri=[gruppo_richiesto]
+        )
+
+        return render_template(
+            "Ospedale_dashboard.html",
+            msg=msg,
+            sacche_richieste=sacche_filtrate
+        )
+
+    except Exception as e:
+        print("Errore durante la ricerca delle sacche:", e)
+        msg = f"Errore imprevisto: {str(e)}"
+        return render_template("Ospedale_dashboard.html", msg=msg, sacche_richieste=[])

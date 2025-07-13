@@ -28,7 +28,7 @@ def Add_kv(class_name, key, **kwargs):
         payload["value"] = json.dumps({
             "id": key,
             "pwd": kwargs.get("pwd")
-    })
+    })  
     elif class_name == "Sacca":
         payload["class"] = "Sacca"
         payload["value"] = json.dumps({
@@ -39,8 +39,7 @@ def Add_kv(class_name, key, **kwargs):
             "donatore": kwargs.get("donatore"),                     # Codice fiscale del donatore
             "gruppo_sanguigno": kwargs.get("gruppo_sanguigno"),     # Gruppo sanguigno
             "data_inserimento": kwargs.get("data_inserimento"),     # Data inserimento
-            "fruibile": kwargs.get("fruibile"),                     # Se la sacca è fruibile o come dicono le persone normali (utilizzabile)2
-            "luogo": kwargs.get("luogo"),                         # Luogo della donazione 
+            "luogo": kwargs.get("luogo"),                          # Luogo della donazione 
             "test": kwargs.get("test", []),                         # Lista dei test associati
             "info": kwargs.get("info", [])                          # Stato della sacca (in transito, giacenza, danneggiata)
         })
@@ -61,45 +60,12 @@ def Add_kv(class_name, key, **kwargs):
             "sito_web": kwargs.get("sito_web", "")                   # Sito web dell'ospedale (opzionale)
         })
 
-    elif class_name == "Emoteca/SPOC":
-        payload["class"] = "Emoteca/SPOC"
-        payload["value"] = json.dumps({
-            "id": next_id,
-            "nome": kwargs.get("nome"),                             # Nome dell'emoteca/SPOC
-            "latitudine": kwargs.get("latitudine"),                 # Coordinate geografiche
-            "longitudine": kwargs.get("longitudine"),               # Ancora coordinate
-            "sacche": kwargs.get("sacche", [])                      # Lista delle sacche associate
-        })
-    elif class_name == "Trasfusione":
-        payload["class"] = "Trasfusione"
-        payload["value"] = json.dumps({
-            "id": next_id,
-            "test_associati": kwargs.get("test_associati", []),     # Test associati alla trasfusione
-            "sacche_associate": kwargs.get("sacche_associate", [])  # Sacche associate alla trasfusione
-        })
-    elif class_name == "Test":
-        payload["class"] = "Test"
-        payload["value"] = json.dumps({
-            "id": next_id,
-            "filename": kwargs.get("filename"),                             # Tipo di test (preliminare, emocromo, etc.)
-            "content": kwargs.get("content"),                     # Lista dei valori del test
-            "esito": kwargs.get("esito"),                            # Esito del test (positivo/negativo)
-            "content-type": kwargs.get("content-type")
-        })
     elif class_name == "Transito":
         payload["class"] = "Transito"
         payload["value"] = json.dumps({
             "id": next_id,
-            "da": kwargs.get("da"),                                 # Luogo di partenza
-            "a": kwargs.get("a"),                                   # Luogo di arrivo
-            "carico": kwargs.get("carico", [])                      # Lista di sacche trasportate
-        })
-    elif class_name == "Moduli":
-        payload["class"] = "Moduli"
-        payload["value"] = json.dumps({
-            "id": next_id,
-            "codice_modulo": kwargs.get("codice_modulo"),           # Codice del modulo
-            "opzioni": kwargs.get("opzioni", [])                    # Lista delle opzioni del modulo
+            "richiedente": kwargs.get("richiedente"),
+            "filtri": kwargs.get("filtri", [])
         })
     else:
         return {"error": "Classe non valida"}
@@ -188,10 +154,8 @@ def GetKeys(class_name):
     except Exception as e:
         return {"error": str(e)}
 
-
-    
 def Get_key_history(class_name, key):
-    url = "http://localhost:55556/api"  # Cambia l'URL se necessario
+    url = "http://localhost:55556/api"
 
     payload = {
         "cmd": "GetKeyHistory",
@@ -210,20 +174,39 @@ def Get_key_history(class_name, key):
                         "isDelete": entry.get("isDelete"),
                         "timestamp": entry.get("timestamp"),
                         "txId": entry.get("txId"),
-                        "data": json.loads(entry.get("data", "{}")).get("value", {})
+                        "data": {}
                     }
-                    # Decodifica la stringa JSON nel campo 'value'
-                    if isinstance(record["data"], str):
+
+                    data_raw = entry.get("data", "")
+                    if data_raw.strip() != "":
                         try:
-                            record["data"] = json.loads(record["data"])
-                        except json.JSONDecodeError:
-                            pass
+                            parsed = json.loads(data_raw)
+                            if "value" in parsed:
+                                # parsed["value"] è ancora stringa JSON?
+                                value_raw = parsed["value"]
+                                if isinstance(value_raw, str) and value_raw.strip() != "":
+                                    try:
+                                        record["data"] = json.loads(value_raw)
+                                    except json.JSONDecodeError as e:
+                                        print(f"Errore decoding nested value: {e}")
+                                        record["data"] = {}
+                                else:
+                                    record["data"] = value_raw
+                            else:
+                                record["data"] = parsed
+                        except json.JSONDecodeError as e:
+                            print(f"Errore decoding data: {e}")
+                            record["data"] = {}
+                    else:
+                        record["data"] = {}
+
                     history.append(record)
                 return history
             return {"error": "Risposta senza campo 'answer' valido"}
         return {"error": f"Errore API: {response.status_code}"}
     except Exception as e:
         return {"error": str(e)}
+
 
 
 def Delete_kv(class_name, key):

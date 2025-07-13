@@ -586,3 +586,35 @@ body.modal-open {
   background-color: #e8f0ff;
   transition: background-color 0.3s;
 }
+
+.tabella-emoteca {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 0.95em;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tabella-emoteca th, .tabella-emoteca td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.tabella-emoteca th {
+  background-color: #1a237e;
+  color: white;
+  font-weight: bold;
+}
+
+.tabella-emoteca tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.tabella-emoteca tr:hover {
+  background-color: #e0e0e0;
+}
+
